@@ -43,6 +43,11 @@ react {
     //   See https://github.com/react-native-community/cli/blob/main/docs/commands.md#bundle
     // extraPackagerArgs = []
 
+     project.ext.vectoricons = [
+          iconFontNames: [ 'MaterialCommunityIcons.ttf', 'EvilIcons.ttf',"MaterialIcons.ttf" ,"Ionicons.ttf","FontAwesome.ttf","AntDesign.ttf"] // Name of the font files you want to copy
+    ]
+    apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
     /* Hermes Commands */
     //   The hermes compiler command to run. By default it is 'hermesc'
     // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
