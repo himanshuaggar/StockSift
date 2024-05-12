@@ -8,7 +8,7 @@ interface UnderlineProps {
 }
 const UnderlineText: React.FC<UnderlineProps> = ({ text }) => {
   return (
-    <CustomText variant="h3" fontFamily={FONTS.Regular} style={styles.underline}>
+    <CustomText variant="h8" fontFamily={FONTS.Regular} style={styles.underline}>
       {text}
     </CustomText>
   );
@@ -17,14 +17,14 @@ const UnderlineText: React.FC<UnderlineProps> = ({ text }) => {
 const BottomText = () => {
   return (
     <>
-      <CustomText variant="h3" fontFamily={FONTS.Regular} style={styles.text}>
+      <CustomText variant="h8" fontFamily={FONTS.Regular} style={styles.text}>
         By proceeding. I accept StockSift's{" "} <UnderlineText text="T&C" />.
         <UnderlineText text="Privacy Policy" />
         .{" "}
         <UnderlineText text="Tariff Rates" />.
       </CustomText>
 
-      <CustomText variant="h3" fontFamily={FONTS.Regular} style={styles.text}>
+      <CustomText variant="h8" fontFamily={FONTS.Regular} style={styles.text}>
         <UnderlineText text="FATCA Declaration" />
         {" "}
         &
