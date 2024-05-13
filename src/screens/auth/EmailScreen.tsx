@@ -1,74 +1,80 @@
-import { Animated, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import CustomSafeAreaView from '../../components/global/CustomSafeAreaView'
-import BackButton from '../../components/global/BackButton'
-import CenteredLogo from '../../components/global/CenteredLogo'
-import CustomText from '../../components/global/CustomText'
-import CustomInput from '../../components/inputs/CustomInput'
-import TouchableText from '../../components/auth/TouchableText'
-import { RFValue } from 'react-native-responsive-fontsize'
-import CustomButton from '../../components/global/CustomButton'
+import React, { FC, useState } from "react";
+import CustomSafeAreaView from "../../components/global/CustomSafeAreaView";
+import BackButton from "../../components/global/BackButton";
+import CenteredLogo from "../../components/global/CenteredLogo";
+import CustomInput from "../../components/inputs/CustomInput";
+import { View } from "react-native";
+import CustomButton from "../../components/global/CustomButton";
+import { navigate } from "../../utils/NavigationUtil";
+import { ScrollView } from "react-native";
+import { validateEmail } from "../../utils/ValidationUtils";
+import { GlobalStyles } from "../../styles/GlobalStyles";
+import { useAppDispatch } from "../../redux/reduxHook";
+import { CheckEmail } from "../../redux/actions/userAction";
 
-const EmailScreen = () => {
-  const [ loading, setLoading] = useState(false);
-  
+const EmailScreen: FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const dispatch = useAppDispatch();
+  const validate = () => {
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    return true;
+  };
+
+  const handleOnSubmit = async () => {
+    setLoading(true);
+    if (validate()) {
+      //if user exist with mail
+      navigate("EmailPasswordScreen", {
+        email: email,
+      })
+
+      // if user doesn't exist
+      // navigate("EmailOtpScreen",{
+      //   email:email,
+      // });
+    }
+    setLoading(false);
+  };
+
   return (
     <CustomSafeAreaView>
-      <BackButton />
-      <CenteredLogo />
-      <View>
+      <BackButton path="LoginScreen" />
+      <ScrollView>
+        <CenteredLogo />
         <CustomInput
-          label='EMAIL ADDRESS'
+          label="EMAIL ADDRESS"
           returnKeyType="done"
-          placeholder='Eg. abc@gmail.com'
-          onSubmitEditing={() => {
-            console.log("HIT OTP API")
+          value={email}
+          inputMode="email"
+          focusable={true}
+          autoFocus={true}
+          error={emailError}
+          onEndEditing={() => validate()}
+          onChangeText={(text) => {
+            setEmail(text);
+            setEmailError("");
+          }}
+          placeholder="Eg: me@gmail.com"
+          onSubmitEditing={handleOnSubmit}
+        />
+      </ScrollView>
+      <View style={GlobalStyles.bottomBtn}>
+        <CustomButton
+          text="NEXT"
+          loading={loading}
+          disabled={!validateEmail(email) || loading}
+          onPress={() => {
+            handleOnSubmit();
           }}
         />
-        <CustomInput
-          label='PASSWORD'
-          returnKeyType="done"
-          placeholder='8-20 characters'
-          onSubmitEditing={() => {
-            console.log("HIT OTP API")
-          }}
-          password
-        />
-        <CustomInput
-          label=''
-
-          placeholder='Enter OTP'
-          onSubmitEditing={() => {
-            console.log("HIT OTP API")
-          }}
-          keyboardType='number-pad'
-          password
-        />
-        <CustomInput
-          label='ENTER OTP SENT TO EMAIL ID'
-
-          placeholder='Enter OTP'
-          onSubmitEditing={() => {
-            console.log("HIT OTP API")
-          }}
-          keyboardType='number-pad'
-          rightText={
-            <TouchableText
-              onPress={() => { }}
-              firstText='Resend in 25s'
-              style={{ fontSize: RFValue(9), marginTop: 0 }}
-            />
-          }
-        />
-      <CustomButton loading={loading} text='NEXT' disabled={false} onPress={() => {
-        setLoading(!loading)
-      }} />
-
       </View>
     </CustomSafeAreaView>
-  )
-}
+  );
+};
 
-export default EmailScreen
-
-const styles = StyleSheet.create({})
+export default EmailScreen;
