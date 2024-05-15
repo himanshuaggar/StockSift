@@ -5,10 +5,11 @@ const express = require('express');
 const connectDB = require('./config/connect.js');
 const authRouter = require('./routes/auth.js');
 const stockRouter = require('./routes/stocks.js');
-
+const errorHandlerMiddleware = require('./middleware/error-handler')
 
 const app = express();
 const port = process.env.PORT || 8000;
+app.use(express.json());
 
 const start = async () => {
     try {
@@ -27,6 +28,8 @@ app.get("/", ( req, res) => {
 
 app.use("/auth", authRouter);
 app.use("/stocks", stockRouter);
+app.use(errorHandlerMiddleware);
+
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)
