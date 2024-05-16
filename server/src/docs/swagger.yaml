@@ -1,0 +1,213 @@
+openapi: 3.1.0
+info:
+  title: stocksift
+  contact: {}
+  version: '1.0'
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+servers:
+- url: http://localhost:4000
+  variables: {}
+paths:
+  /stocks:
+    get:
+      tags:
+      - Misc
+      summary: Stocks
+      operationId: Stocks
+      parameters:
+      - name: Cache-Control
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          examples:
+          - no-cache
+      - name: Postman-Token
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          examples:
+          - <calculated when request is sent>
+      - name: Host
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          examples:
+          - <calculated when request is sent>
+      - name: User-Agent
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          examples:
+          - PostmanRuntime/7.32.1
+      - name: Accept
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          examples:
+          - '*/*'
+      - name: Accept-Encoding
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          examples:
+          - gzip, deflate, br
+      - name: Connection
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          examples:
+          - keep-alive
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    parameters: []
+  /auth/register:
+    post:
+      tags:
+      - Auth
+      summary: Register
+      operationId: Register
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/RegisterRequest'
+              - examples:
+                - name: himanshu
+                  email: qwertgb@gmail.com
+                  password: '1234567890'
+                  phone_number: 9876545678
+              contentMediaType: application/json
+            example:
+              name: himanshu
+              email: qwertgb@gmail.com
+              password: '1234567890'
+              phone_number: 9876545678
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    parameters: []
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Login
+      operationId: Login
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/LoginRequest'
+              - examples:
+                - email: qwertgb@gmail.com
+                  password: '1234567890'
+              contentMediaType: application/json
+            example:
+              email: qwertgb@gmail.com
+              password: '1234567890'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    parameters: []
+  /:
+    get:
+      tags:
+      - Auth
+      summary: Entry Point
+      description: ''
+      operationId: EntryPoint
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    parameters: []
+components:
+  schemas:
+    RegisterRequest:
+      title: RegisterRequest
+      required:
+      - name
+      - email
+      - password
+      - phone_number
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone_number:
+          type: integer
+          contentEncoding: int64
+      examples:
+      - name: himanshu
+        email: qwertgb@gmail.com
+        password: '1234567890'
+        phone_number: 9876545678
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      examples:
+      - email: qwertgb@gmail.com
+        password: '1234567890'
+  securitySchemes:
+    httpBearer:
+      type: http
+      scheme: bearer
+security:
+- httpBearer: []
+tags:
+- name: Misc
+  description: ''
+- name: Auth
+  description: ''
