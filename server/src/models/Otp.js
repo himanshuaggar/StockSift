@@ -26,6 +26,7 @@ const otpSchema = new mongoose.Schema({
 otpSchema.pre("save", async function (next) {
   if (this.isNew) {
     const salt = await bcrypt.genSalt(10);
+    console.log(this.email, this.otp, this.otp_type)
     await sendVerificationMail(this.email, this.otp, this.otp_type);
     this.otp = await bcrypt.hash(this.otp, salt);
   }
@@ -40,6 +41,7 @@ otpSchema.methods.compareOTP = async function (otp) {
 async function sendVerificationMail(email, otp, otp_type) {
   try {
     const mailResponse = await mailSender(email, otp, otp_type);
+    console.log(mailResponse)
   } catch (error) {
     console.log(error);
     throw error;

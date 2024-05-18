@@ -23,11 +23,12 @@ module.exports.mailSender = async (email, otp, otp_type) => {
       let result = await transporter.sendMail({
         from: process.env.MAIL_FROM,
         to: email,
-        subject: "Groww Clone",
+        subject: "StockSift OTP",
         html:htmlContent ,
       });
-  
+      console.log(result);
       return result;
+      
     } catch (err) {
       console.log(err);
       throw err;
