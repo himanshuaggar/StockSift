@@ -11,7 +11,7 @@ const checkMail = async (req, res) => {
     if (!email) {
         throw new BadRequestError("Please Provide email");
     }
-
+    let isPasswordSet = true;
     let user = await User.findOne({ email });
     if (!user) {
         user = await User.create({ email: email });
@@ -23,11 +23,13 @@ const checkMail = async (req, res) => {
         const otpPayload = { email: email, otp: otp, otp_type: "email" };
         console.log(otpPayload);
         await OTP.create(otpPayload);
+        isPasswordSet=false;
     }
 
      res.status(StatusCodes.OK).json({
         email_verified: user.email_verified,
         phone_verified: user.phone_verified,
+        isPasswordSet:isPasswordSet
     })
     
 

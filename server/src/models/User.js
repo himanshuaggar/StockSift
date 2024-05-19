@@ -41,22 +41,22 @@ const UserSchema = new mongoose.Schema(
         address: String,
         date_of_birth: Date,
         biometricKey: String,
-        email_verified:{
+        email_verified: {
             type: Boolean,
-            default:false,
+            default: false,
         },
-        phone_verified:{
-            type:Boolean,
-            default:false,
+        phone_verified: {
+            type: Boolean,
+            default: false,
         },
         bank_amount: {
-            type:Number,
-            default:0,
-        }
-        // gender: {
-        //     type: String,
-        //     enum: ["male", "female", "other"],
-        // },
+            type: Number,
+            default: 0,
+        },
+        gender: {
+            type: String,
+            enum: ["male", "female", "other"],
+        },
         // wrong_pin_attempts: {
         //     type: Number,
         //     default: 0,
@@ -79,12 +79,6 @@ const UserSchema = new mongoose.Schema(
     },
 );
 
-UserSchema.pre("save", async function () {
-    if (this?.password) {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-    }
-});
 
 UserSchema.pre("save", async function () {
     if (this.isModified("login_pin")) {
@@ -97,17 +91,61 @@ UserSchema.methods.createJWT = function () {
     return jwt.sign(
         { userId: this._id, name: this.name },
         process.env.JWT_SECRET,
-        { 
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY 
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
         }
     );
 };
+UserSchema.statics.updatePassword = async function (email, newPassword) {
+    try {
+        const user = await this.findOne({ email });
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
+        if (isSamePassword) {
+            throw new BadRequestError(
+                "New password must be different from the current password"
+            );
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        await this.findOneAndUpdate(
+            { email },
+            {
+                password: hashedPassword,
+                blocked_until_password: null,
+                wrong_password_attempts: 0,
+            }
+        );
+
+        return { success: true, message: "Password updated successfully" };
+    } catch (error) {
+        throw error;
+    }
+};
+
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
     const isMatch = await bcrypt.compare(candidatePassword, this.password);
     return isMatch;
 }
+UserSchema.methods.createAccessToken = function () {
+    return jwt.sign(
+        { userId: this._id, name: this.name },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    );
+};
 
+UserSchema.methods.createRefreshToken = function () {
+    return jwt.sign({ userId: this._id }, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+    });
+};
 
 const User = mongoose.model("User", UserSchema);
 
