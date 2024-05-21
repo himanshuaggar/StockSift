@@ -24,7 +24,7 @@ const updateProfile = async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, {
     new: true,
     runValidators: true,
-    select: "-password",
+    // select: "-password",
   });
 
   if (!updatedUser) {
@@ -105,21 +105,22 @@ const verifyPin = async (req, res) => {
   const isVerifyingPin = await user.comparePIN(login_pin);
 
   if (!isVerifyingPin) {
-    let message;
-    if (user.blocked_until_pin && user.blocked_until_pin > new Date()) {
-      const remainingMinutes = Math.ceil(
-        (user.blocked_until_pin - new Date()) / (60 * 1000)
-      );
-      message = `Please try again after ${remainingMinutes} minute(s).`;
-    } else {
-      const attemptsRemaining = 3 - user.wrong_pin_attempts;
+    // let message;
+    // if (user.blocked_until_pin && user.blocked_until_pin > new Date()) {
+    //   const remainingMinutes = Math.ceil(
+    //     (user.blocked_until_pin - new Date()) / (60 * 1000)
+    //   );
+    //   message = `Please try again after ${remainingMinutes} minute(s).`;
+    // } else {
+    //   const attemptsRemaining = 3 - user.wrong_pin_attempts;
 
-      message =
-        attemptsRemaining > 0
-          ? `Wrong PIN. ${attemptsRemaining} attempts remaining.`
-          : `Wrong PIN limit reached. Try after 30 minute(s).`;
-    }
-    throw new UnauthenticatedError(message);
+    //   message =
+    //     attemptsRemaining > 0
+    //       ? `Wrong PIN. ${attemptsRemaining} attempts remaining.`
+    //       : `Wrong PIN limit reached. Try after 30 minute(s).`;
+    // }
+    // throw new UnauthenticatedError(message);
+    throw new BadRequestError("Invalid PIN");
   }
 
   const access_token = await jwt.sign(
@@ -175,6 +176,7 @@ const getProfile = async (req, res) => {
 };
 
 module.exports = {
+  updateProfile,
   updateProfile,
   setLoginPinFirst,
   verifyPin,

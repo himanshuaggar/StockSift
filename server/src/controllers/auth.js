@@ -4,43 +4,79 @@ const { StatusCodes } = require('http-status-codes');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+
+const register = async ( req, res ) => {
+    
+    const user = await User.create({...req.body});
+    const token = user.createJWT();
+    res.status(StatusCodes.CREATED).json({ user :{ name : user.name}, token});
+
+}
+
 const setpassword = async (req, res) => {
+    // try {
+    //     const { email, password, pass_token } = req.body;
+    //     if (!email || !password || !pass_token) {
+    //         throw new BadRequestError("invalid Request")
+    //     }
+    //     const user = await User.create({ email });
+    //     const payload = jwt.verify(pass_token, process.env.PASSWORD_SET_SECRET)
+    //     if (payload.user !== user.id) {
+    //         throw new NotFoundError("Onvalid Token");
+    //     }
+    //     if (!user || user.email_verified) {
+    //         throw new BadRequestError("Password set! use reset password")
+    //     }
+    //     if (!user && user.password) {
+    //         throw new BadRequestError("Password set! use reset password")
+    //     }
+
+    //     const salt = await bcrypt.genSalt(10);
+    //     const hashedpassword = await bcrypt.hash(password, salt);
+
+    //     const updateduser = await User.findOneAndUpdate(user.id, {
+    //         password: hashedpassword
+    //     });
+
+    //     console.log(updateduser);
+
+    //     const access_token = user.createRefreshToken();
+    //     const refresh_token = user.createRefreshToken();
+    //     res.status(StatusCodes.CREATED).json({
+    //         user: { name: updateduser.name, userId: updateduser.id },
+    //         token: { access_token: access_token, refesh_token: refresh_token },
+    //     })
+
+    // } catch (error) {
+    //     console.log(error);
+    //     throw new BadRequestError("check pass token or body");
+    // }
+    const { email, password, pass_token } = req.body;
+    if (!email || !password || !pass_token) {
+        throw new BadRequestError("Invalid Request");
+    }
+
+    const user = await User.findOne({ email });
+    if (user) {
+        throw new BadRequestError("User already exist!");
+    }
+
     try {
-        const { email, password, pass_token } = req.body;
-        if (!email || !password || !pass_token) {
-            throw new BadRequestError("invalid Request")
-        }
-        const user = await User.create({ email });
-        const payload = jwt.verify(pass_token, process.env.PASSWORD_SET_SECRET)
-        if (payload.user !== user.id) {
-            throw new NotFoundError("Onvalid Token");
-        }
-        if (!user || user.email_verified) {
-            throw new BadRequestError("Password set! use reset password")
-        }
-        if (!user && user.password) {
-            throw new BadRequestError("Password set! use reset password")
+        const payload = jwt.verify(pass_token, process.env.PASSWORD_SET_SECRET);
+        if (payload.email !== email) {
+            throw new BadRequestError("Invalid Token or expired");
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedpassword = await bcrypt.hash(password, salt);
-
-        const updateduser = await User.findOneAndUpdate(user.id, {
-            password: hashedpassword
-        });
-
-        console.log(updateduser);
-
-        const access_token = user.createRefreshToken();
-        const refresh_token = user.createRefreshToken();
+        const new_user = await User.create({ email: email, password: password });
+        const access_token = new_user.createAccessToken();
+        const refresh_token = new_user.createRefreshToken();
         res.status(StatusCodes.CREATED).json({
-            user: { name: updateduser.name, userId: updateduser.id },
-            token: { access_token: access_token, refesh_token: refresh_token },
-        })
-
+            user: { userId: new_user.id, email: new_user.email },
+            tokens: { access_token: access_token, refresh_token: refresh_token },
+        });
     } catch (error) {
-        console.log(error);
-        throw new BadRequestError("check pass token or body");
+        console.log("@@@", error)
+        throw new BadRequestError("Invalid Body");
     }
 
 }
@@ -149,5 +185,5 @@ const logout = async (req, res) => {
 };
 
 module.exports = {
-    setpassword, login, oauth, logout, refreshToken
+    setpassword, login, oauth, logout, refreshToken, register
 }

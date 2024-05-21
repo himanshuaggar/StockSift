@@ -29,7 +29,6 @@ const verifyOtp = async (req, res) => {
         throw new BadRequestError("Invalid OTP or OTP expired")
     }
     console.log(isVerified);
-    await otpRecord.deleteOne({_id : otpRecord._id})
 
     switch (otp_type) {
         case "phone":
@@ -39,13 +38,13 @@ const verifyOtp = async (req, res) => {
             await User.findOneAndUpdate({ email }, { email_verified: true });
             break;
         case "reset_pin":
+            if (!data || data.length != 4) {
+                throw new BadRequestError("PIN Should be 4 Digit");
+            }
             await User.findOneAndUpdate({ email }, { login_pin: data });
+
+            await User.updatePIN(email, data);
             break;
-        // if (!data || data.length != 4) {
-        //     throw new BadRequestError("PIN Should be 4 Digit");
-        // }
-        // await User.updatePIN(email, data);
-        // break;
         case "reset_password":
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(data, salt);
@@ -56,18 +55,19 @@ const verifyOtp = async (req, res) => {
         default:
             throw new BadRequestError("Invalid OTP Request type");
     }
+    await otpRecord.deleteOne({ _id: otpRecord._id })
 
-    // const user = await User.findOne({email});
-    // const pass_token = jwt.sign({ userId: user.id}, process.env.PASSWORD_SET_SECRET, {
-    //     expiresUn: process.env.PASSWORD_SET_SECRET_EXPIRY
-    // });
-    // if(otp_type == 'email'){
-    //     res.status(StatusCodes.OK).json({
-    //         msg: "OTP Verified",
-    //         pass_token: pass_token,
-    //     })
-    //     return
-    // }
+    const user = await User.findOne({email});
+    const pass_token = jwt.sign({ userId: user.id}, process.env.PASSWORD_SET_SECRET, {
+        expiresIn: process.env.PASSWORD_SET_SECRET_EXPIRY
+    });
+    if(otp_type == 'email'){
+        res.status(StatusCodes.OK).json({
+            msg: "OTP Verified",
+            pass_token: pass_token,
+        })
+        return
+    }
 
     res.status(StatusCodes.OK).json({
         msg: "OTP Veriifed and operation completed successfully"
@@ -80,6 +80,9 @@ const sendOtp = async (req, res) => {
     if (!email || !otp_type) {
         throw new BadRequestError("Invalid body for request");
     }
+    const otp = await generateOtp();
+    const otpPayload = { email: email, otp: otp, otp_type: otp_type };
+    await OTP.create(otpPayload);
 
     const user = await User.findOne({ email });
 
@@ -90,13 +93,10 @@ const sendOtp = async (req, res) => {
     if (otp_type == "email" && user) {
         throw new BadRequestError("User already exist");
     }
-    // if (otp_type == "phone" && user.phone_number) {
-    //     throw new BadRequestError("Phone number already exist!");
-    // }
+    if (otp_type == "phone" && user.phone_number) {
+        throw new BadRequestError("Phone number already exist!");
+    }
 
-    const otp = await generateOtp();
-    const otpPayload = { email: email, otp: otp, otp_type: otp_type };
-    await OTP.create(otpPayload);
 
     res.status(StatusCodes.OK).json({
         msg: "OTP Sent to registered email address",

@@ -57,22 +57,22 @@ const UserSchema = new mongoose.Schema(
             type: String,
             enum: ["male", "female", "other"],
         },
-        // wrong_pin_attempts: {
-        //     type: Number,
-        //     default: 0,
-        // },
-        // blocked_until_pin: {
-        //     type: Date,
-        //     default: null,
-        // },
-        // wrong_password_attempts: {
-        //     type: Number,
-        //     default: 0,
-        // },
-        // blocked_until_password: {
-        //     type: Date,
-        //     default: null,
-        // },
+        wrong_pin_attempts: {
+            type: Number,
+            default: 0,
+        },
+        blocked_until_pin: {
+            type: Date,
+            default: null,
+        },
+        wrong_password_attempts: {
+            type: Number,
+            default: 0,
+        },
+        blocked_until_password: {
+            type: Date,
+            default: null,
+        },
     },
     {
         timestamps: true
@@ -133,6 +133,38 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
     const isMatch = await bcrypt.compare(candidatePassword, this.password);
     return isMatch;
 }
+UserSchema.methods.comparePIN = async function comparePIN(candidatePIN) {
+    const isMatch = await bcrypt.compare(candidatePIN, this.login_pin);
+    return isMatch;
+};
+UserSchema.statics.updatePIN = async function (email, newPin) {
+    try {
+        const user = await this.findOne({ email });
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+
+        const isSamePIN = await bcrypt.compare(newPin, user.login_pin);
+        if (isSamePIN) {
+            throw new BadRequestError(
+                "New PIN must be different from the current PIN"
+            );
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPIN = await bcrypt.hash(newPin, salt);
+
+        await this.findOneAndUpdate(
+            { email },
+            { login_pin: hashedPIN, blocked_until_pin: null, wrong_pin_attempts: 0 }
+        );
+
+        return { success: true, message: "PIN updated successfully" };
+    } catch (error) {
+        throw error;
+    }
+};
+
 UserSchema.methods.createAccessToken = function () {
     return jwt.sign(
         { userId: this._id, name: this.name },

@@ -11,12 +11,12 @@ const router = express.Router();
 router.get('/',(req,res) => {
     res.send("Auth")
 })
-// router.post("/register", register);
+router.post("/register", register);
 router.post("/login", login)
 router.post('/check-email', checkMail);
 router.post("/verify-otp", verifyOtp);
 router.post("/send-otp", sendOtp);
-router.post("set-password", setpassword);
+router.post("/set-password", setpassword);
 router.put('/profile',auth, updateProfile);
 router.put('/set-pin',auth, setLoginPinFirst);
 router.post("/verify-pin", auth, verifyPin);
