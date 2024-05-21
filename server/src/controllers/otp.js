@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 
 const verifyOtp = async (req, res) => {
     const { data, email, otp, otp_type } = req.body;
+    console.log(req.body);
 
     if (!email || !otp || !otp_type) {
         throw new BadRequestError("Invalid Body of reques");
@@ -19,7 +20,7 @@ const verifyOtp = async (req, res) => {
     const otpRecord = await OTP.findOne({ email, otp_type })
         .sort({ createdAt: -1 }) // sorting it with latest one logic
         .limit(1);
-
+    console.log(otpRecord);
     if (!otpRecord) {
         throw new BadRequestError("Invalid OTP or OTP Expired")
     }
@@ -27,7 +28,8 @@ const verifyOtp = async (req, res) => {
     if (!isVerified) {
         throw new BadRequestError("Invalid OTP or OTP expired")
     }
-    await otpRecord.deleteOne(otpRecord.id)
+    console.log(isVerified);
+    await otpRecord.deleteOne({_id : otpRecord._id})
 
     switch (otp_type) {
         case "phone":
@@ -55,17 +57,17 @@ const verifyOtp = async (req, res) => {
             throw new BadRequestError("Invalid OTP Request type");
     }
 
-    const user = await User.findOne({email});
-    const pass_token = jwt.sign({ userId: user.id}, process.env.PASSWORD_SET_SECRET, {
-        expiresUn: process.env.PASSWORD_SET_SECRET_EXPIRY
-    });
-    if(otp_type == 'email'){
-        res.status(StatusCodes.OK).json({
-            msg: "OTP Verified",
-            pass_token: pass_token,
-        })
-        return
-    }
+    // const user = await User.findOne({email});
+    // const pass_token = jwt.sign({ userId: user.id}, process.env.PASSWORD_SET_SECRET, {
+    //     expiresUn: process.env.PASSWORD_SET_SECRET_EXPIRY
+    // });
+    // if(otp_type == 'email'){
+    //     res.status(StatusCodes.OK).json({
+    //         msg: "OTP Verified",
+    //         pass_token: pass_token,
+    //     })
+    //     return
+    // }
 
     res.status(StatusCodes.OK).json({
         msg: "OTP Veriifed and operation completed successfully"

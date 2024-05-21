@@ -71,6 +71,83 @@ const oauth = async (req, res) => {
     const { id_token } = req.body;
 }
 
+const refreshToken = async (req, res) => {
+    const { type, refresh_token } = req.body;
+    if (!type || !["socket", "app"].includes(type) || !refresh_token) {
+        throw new BadRequestError("Invalid body");
+    }
+    try {
+        let accessToken, newRefreshToken;
+        if (type === "socket") {
+            ({ accessToken, newRefreshToken } = await generateRefreshTokens(
+                refresh_token,
+                process.env.REFRESH_SOCKET_TOKEN_SECRET,
+                process.env.REFRESH_SOCKET_TOKEN_EXPIRY,
+                process.env.SOCKET_TOKEN_SECRET,
+                process.env.SOCKET_TOKEN_EXPIRY
+            ));
+        } else if (type === "app") {
+            ({ accessToken, newRefreshToken } = await generateRefreshTokens(
+                refresh_token,
+                process.env.REFRESH_TOKEN_SECRET,
+                process.env.REFRESH_SOCKET_TOKEN_EXPIRY,
+                process.env.JWT_SECRET,
+                process.env.ACCESS_TOKEN_EXPIRY
+            ));
+        }
+
+        res
+            .status(StatusCodes.OK)
+            .json({ access_token: accessToken, refresh_token: newRefreshToken });
+    } catch (error) {
+        console.error(error);
+        res
+            .status(StatusCodes.UNAUTHORIZED)
+            .json({ message: "Invalid or expired token" });
+    }
+};
+
+async function generateRefreshTokens(
+    token,
+    refresh_secret,
+    refresh_expiry,
+    access_secret,
+    access_expiry
+) {
+    try {
+        const payload = jwt.verify(token, refresh_secret);
+        const user = await User.findById(payload.userId);
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+
+        const accessToken = await jwt.sign({ userId: user.id }, access_secret, {
+            expiresIn: access_expiry,
+        });
+
+        const newRefreshToken = await jwt.sign(
+            { userId: user.id },
+            refresh_secret,
+            {
+                expiresIn: refresh_expiry,
+            }
+        );
+
+        return { accessToken, newRefreshToken };
+    } catch (error) {
+        console.error(error);
+        throw new UnauthenticatedError("Invalid or expired token");
+    }
+}
+
+const logout = async (req, res) => {
+    const accessToken = req.headers.authorization?.split(" ")[1];
+    const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
+    await User.updateOne({ _id: userId }, { $unset: { biometricKey: 1 } });
+    res.status(StatusCodes.OK).json({ message: "User logged out successfully" });
+};
+
 module.exports = {
-    setpassword, login, oauth,
+    setpassword, login, oauth, logout, refreshToken
 }
