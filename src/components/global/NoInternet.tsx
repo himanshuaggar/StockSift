@@ -1,44 +1,85 @@
-import React, { FC } from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
-import CustomText from "../global/CustomText";
-import { FONTS } from "../../constants/Fonts";
-import { Colors } from "../../constants/Colors";
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { SafeAreaView, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { useTheme } from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
+import { Colors } from '../../constants/Colors';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { RFValue } from 'react-native-responsive-fontsize';
+import CustomText from './CustomText';
+import { FONTS } from '../../constants/Fonts';
 
-interface MaterialTabProps {
-  focused: boolean;
-  onPress: () => void;
-  label: string;
+
+const NoInternet = () => {
+  const theme = useColorScheme();
+  const { colors } = useTheme();
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state: any) => {
+      setIsConnected(state.isConnected);
+    });
+    return () => {
+      unsubscribe();
+    }
+  }, []);
+  return (
+    <>
+      {!isConnected && (
+        <SafeAreaView style={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}>
+          <View style={[
+            styles.subContainer,
+            {
+              backgroundColor:
+                theme === "dark"
+                  ? Colors.dark_background_light
+                  : Colors.light_sub_background,
+            },
+          ]}>
+            <Icon name="wifi-off" size={RFValue(20)} color={colors.text} />
+            <View>
+              <CustomText variant="h7" fontFamily={FONTS.Medium}>
+                Low Internet
+              </CustomText>
+              <CustomText
+                variant="h8"
+                fontFamily={FONTS.Medium}
+                style={styles.bottomText}
+              >
+                Check your network connection
+              </CustomText>
+            </View>
+
+          </View>
+        </SafeAreaView>
+      )}
+    </>
+  )
 }
 
-const MaterialTab: FC<MaterialTabProps> = ({ focused, onPress, label }) => {
-  return (
-    <TouchableOpacity
-      style={[
-        styles.btnTab,
-        {
-          borderBottomWidth: focused ? 2 : 0,
-          borderColor: Colors.profit,
-        },
-      ]}
-      onPress={onPress}
-    >
-      <CustomText
-        style={{ opacity: focused ? 1 : 0.6 }}
-        fontSize={RFPercentage(1.5)}
-        fontFamily={FONTS.Medium}
-      >
-        {label}
-      </CustomText>
-    </TouchableOpacity>
-  );
-};
+export default NoInternet
 
 const styles = StyleSheet.create({
-  btnTab: {
-    padding: 10,
-    paddingBottom: 8,
+  container: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
   },
-});
-
-export default MaterialTab;
+  subContainer: {
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    flexDirection: "row",
+    width: "100%",
+  },
+  bottomText: {
+    opacity: 0.6,
+    marginTop: 3,
+  },
+})

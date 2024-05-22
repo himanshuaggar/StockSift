@@ -5,7 +5,8 @@ import Navigation from './src/navigation/Navigation'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
-
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './ToastConfig';
 
 GoogleSignin.configure({
   webClientId:
@@ -21,6 +22,7 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
       <Navigation />
+      <Toast visibilityTime={3000} config={toastConfig} bottomOffset={0} position='bottom'/>
       </Provider>
     </GestureHandlerRootView>
   )

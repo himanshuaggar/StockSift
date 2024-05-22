@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCustomTheme } from './Theme'
 import { navigationRef } from '../utils/NavigationUtil'
 import MainNavigator from './MainNavigator'
+import NoInternet from '../components/global/NoInternet'
 
 
 const Stack = createNativeStackNavigator()
@@ -26,6 +27,7 @@ const Navigation = () => {
 return (
     <NavigationContainer ref={navigationRef} theme={MyTheme}>
         <MainNavigator />
+        <NoInternet/>
     </NavigationContainer>
 )
 }

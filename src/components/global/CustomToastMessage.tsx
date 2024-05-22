@@ -1,62 +1,72 @@
-import React, { FC } from "react";
-import {
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-  ViewStyle,
-  TextStyle,
-} from "react-native";
-import CustomText from "../global/CustomText";
+import React from "react";
+import { StyleSheet, View, Animated, Platform } from "react-native";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import CustomText from "./CustomText";
+import { Colors } from "../../constants/Colors";
 import { FONTS } from "../../constants/Fonts";
-import { useTheme } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Ionicons";
 
-interface CircleTabProps {
-  focused: boolean;
-  onPress: () => void;
-  label: string;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+interface Props {
+  type: string;
+  msg: string;
 }
 
-const CircleTab: FC<CircleTabProps> = ({
-  focused,
-  onPress,
-  label,
-  style,
-  textStyle,
-}) => {
-  const { colors } = useTheme();
+function CustomToastMessage({ type, msg }: Props) {
+  let bgColor = `${Colors.dark_background_light}`;
+  let textColor = Colors.dark_text;
+
+  switch (type) {
+    case "warningToast":
+      bgColor = "#fcba03";
+      textColor = Colors.light_text;
+      break;
+    default:
+      break;
+  }
+
   return (
-    <TouchableOpacity
-      style={[
-        styles.btnTab,
-        {
-          borderColor: focused ? colors.text : colors.border,
-          backgroundColor: focused ? colors.card : colors.background,
-        },
-        style,
-      ]}
-      onPress={onPress}
-    >
-      <CustomText
-        style={{ opacity: focused ? 1 : 0.6, ...textStyle }}
-        variant="h9"
-        fontFamily={FONTS.Medium}
-      >
-        {label}
-      </CustomText>
-    </TouchableOpacity>
+    <Animated.View style={[styles.modal, { backgroundColor: bgColor }]}>
+      <View style={styles.subContainer}>
+        {type == "successToast" && (
+          <Icon
+            name="checkmark-circle-sharp"
+            size={RFValue(16)}
+            color={Colors.themeColor}
+          />
+        )}
+        <CustomText
+          style={{ color: textColor }}
+          variant="h7"
+          fontFamily={FONTS.Medium}
+        >
+          {msg}
+        </CustomText>
+      </View>
+    </Animated.View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  btnTab: {
-    padding: 10,
-    marginRight: 10,
-    marginVertical: 15,
-    borderWidth: Platform.OS === "android" ? 1 : 0.5,
-    borderRadius: 20,
+  subContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap:10,
+  },
+  text: {
+    color: Colors.dark_text,
+  },
+  modal: {
+    paddingTop: 16,
+    paddingBottom: Platform.OS==='ios' ? RFPercentage(4) : 16,
+    paddingHorizontal: RFPercentage(3),
+    alignSelf: "center",
+    position: "absolute",
+    bottom: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
   },
 });
 
-export default CircleTab;
+export default CustomToastMessage;
