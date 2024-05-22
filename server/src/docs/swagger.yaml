@@ -2,92 +2,16 @@ openapi: 3.1.0
 info:
   title: stocksift
   contact: {}
-  version: '1.0'
-jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+  version: '2.0'
+jsonSchemaDialect: 'https://json-schema.org/draft/2020-12/schema'
 servers:
-- url: http://localhost:4000
-  variables: {}
+  - url: 'http://localhost:4000'
+    variables: {}
 paths:
-  /stocks:
-    get:
-      tags:
-      - Misc
-      summary: Stocks
-      operationId: Stocks
-      parameters:
-      - name: Cache-Control
-        in: header
-        description: ''
-        required: true
-        style: simple
-        schema:
-          type: string
-          examples:
-          - no-cache
-      - name: Postman-Token
-        in: header
-        description: ''
-        required: true
-        style: simple
-        schema:
-          type: string
-          examples:
-          - <calculated when request is sent>
-      - name: Host
-        in: header
-        description: ''
-        required: true
-        style: simple
-        schema:
-          type: string
-          examples:
-          - <calculated when request is sent>
-      - name: User-Agent
-        in: header
-        description: ''
-        required: true
-        style: simple
-        schema:
-          type: string
-          examples:
-          - PostmanRuntime/7.32.1
-      - name: Accept
-        in: header
-        description: ''
-        required: true
-        style: simple
-        schema:
-          type: string
-          examples:
-          - '*/*'
-      - name: Accept-Encoding
-        in: header
-        description: ''
-        required: true
-        style: simple
-        schema:
-          type: string
-          examples:
-          - gzip, deflate, br
-      - name: Connection
-        in: header
-        description: ''
-        required: true
-        style: simple
-        schema:
-          type: string
-          examples:
-          - keep-alive
-      responses:
-        '200':
-          description: ''
-          headers: {}
-      deprecated: false
-    parameters: []
   /auth/register:
     post:
       tags:
-      - Auth
+        - Misc
       summary: Register
       operationId: Register
       parameters: []
@@ -97,18 +21,18 @@ paths:
           application/json:
             schema:
               allOf:
-              - $ref: '#/components/schemas/RegisterRequest'
-              - examples:
-                - name: himanshu
-                  email: qwertgb@gmail.com
-                  password: '1234567890'
-                  phone_number: 9876545678
+                - $ref: '#/components/schemas/RegisterRequest'
+                - examples:
+                    - email: himanshuaggar00@gmail.com
+                      password: '1234567890'
+                      register_token: >-
+                        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhpbWFuc2h1YWdnYXIwMEBnbWFpbC5jb20iLCJpYXQiOjE3MTYzNTQwMjMsImV4cCI6MTcxODk0NjAyM30.MazvHU59Vxm6JFxtPZ61rQtdLGt1hmxw8H8PkDq1JYI
               contentMediaType: application/json
             example:
-              name: himanshu
-              email: qwertgb@gmail.com
+              email: himanshuaggar00@gmail.com
               password: '1234567890'
-              phone_number: 9876545678
+              register_token: >-
+                eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhpbWFuc2h1YWdnYXIwMEBnbWFpbC5jb20iLCJpYXQiOjE3MTYzNTQwMjMsImV4cCI6MTcxODk0NjAyM30.MazvHU59Vxm6JFxtPZ61rQtdLGt1hmxw8H8PkDq1JYI
         required: true
       responses:
         '200':
@@ -117,10 +41,86 @@ paths:
       deprecated: false
       security: []
     parameters: []
+  /stocks:
+    get:
+      tags:
+        - Misc
+      summary: Stocks
+      operationId: Stocks
+      parameters:
+        - name: Cache-Control
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - no-cache
+        - name: Postman-Token
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: Host
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: User-Agent
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - PostmanRuntime/7.32.1
+        - name: Accept
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - '*/*'
+        - name: Accept-Encoding
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - 'gzip, deflate, br'
+        - name: Connection
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - keep-alive
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    parameters: []
   /auth/login:
     post:
       tags:
-      - Auth
+        - Misc
       summary: Login
       operationId: Login
       parameters: []
@@ -130,14 +130,14 @@ paths:
           application/json:
             schema:
               allOf:
-              - $ref: '#/components/schemas/LoginRequest'
-              - examples:
-                - email: qwertgb@gmail.com
-                  password: '1234567890'
+                - $ref: '#/components/schemas/LoginRequest'
+                - examples:
+                    - email: himanshuaggar00@gmail.com
+                      password: '123456790'
               contentMediaType: application/json
             example:
-              email: qwertgb@gmail.com
-              password: '1234567890'
+              email: himanshuaggar00@gmail.com
+              password: '123456790'
         required: true
       responses:
         '200':
@@ -146,14 +146,341 @@ paths:
       deprecated: false
       security: []
     parameters: []
-  /:
-    get:
+  /auth/check-email:
+    post:
       tags:
-      - Auth
-      summary: Entry Point
-      description: ''
-      operationId: EntryPoint
+        - Misc
+      summary: Check EMail
+      operationId: CheckEMail
       parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CheckEMailRequest'
+                - examples:
+                    - email: himanshuaggar00@gmail.com
+              contentMediaType: application/json
+            example:
+              email: himanshuaggar00@gmail.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    parameters: []
+  /auth/verify-otp:
+    post:
+      tags:
+        - Misc
+      summary: Verify OTP
+      operationId: VerifyOTP
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/VerifyOTPRequest'
+                - examples:
+                    - email: himanshuaggar00@gmail.com
+                      otp_type: email
+                      otp: '418098'
+                      data: null
+              contentMediaType: application/json
+            example:
+              email: himanshuaggar00@gmail.com
+              otp_type: email
+              otp: '418098'
+              data: null
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    parameters: []
+  /auth/send-otp:
+    post:
+      tags:
+        - Misc
+      summary: Send OTP
+      operationId: SendOTP
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SendOTPRequest'
+                - examples:
+                    - email: himanshuaggar00@gmail.com
+                      otp_type: email
+              contentMediaType: application/json
+            example:
+              email: himanshuaggar00@gmail.com
+              otp_type: email
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    parameters: []
+  /auth/profile:
+    put:
+      tags:
+        - Misc
+      summary: Set Password Copy
+      operationId: SetPasswordCopy
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SetPasswordCopyRequest'
+                - examples:
+                    - email: himanshuaggar00@gmail.com
+                      otp_type: email
+              contentMediaType: application/json
+            example:
+              email: himanshuaggar00@gmail.com
+              otp_type: email
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    parameters: []
+  /auth/set-pin:
+    post:
+      tags:
+        - Misc
+      summary: Set First Login Pin
+      operationId: SetFirstLoginPin
+      parameters:
+        - name: Cache-Control
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - no-cache
+        - name: Postman-Token
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: Content-Length
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: Host
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: User-Agent
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - PostmanRuntime/7.32.1
+        - name: Accept
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - '*/*'
+        - name: Accept-Encoding
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - 'gzip, deflate, br'
+        - name: Connection
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - keep-alive
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SetFirstLoginPinRequest'
+                - examples:
+                    - login_pin: '1234'
+              contentMediaType: application/json
+            example:
+              login_pin: '1234'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    parameters: []
+  /auth/verify-pin:
+    post:
+      tags:
+        - Misc
+      summary: Verify PIN
+      operationId: VerifyPIN
+      parameters:
+        - name: Cache-Control
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - no-cache
+        - name: Postman-Token
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: Content-Length
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: Host
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - <calculated when request is sent>
+        - name: User-Agent
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - PostmanRuntime/7.32.1
+        - name: Accept
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - '*/*'
+        - name: Accept-Encoding
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - 'gzip, deflate, br'
+        - name: Connection
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            examples:
+              - keep-alive
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/VerifyPINRequest'
+                - examples:
+                    - login_pin: '1234'
+              contentMediaType: application/json
+            example:
+              login_pin: '1234'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+    parameters: []
+  /auth/oauth:
+    post:
+      tags:
+        - Misc
+      summary: oauth
+      operationId: oauth
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/oauthrequest'
+                - examples:
+                    - provider: google
+                      id_token: ''
+              contentMediaType: application/json
+            example:
+              provider: google
+              id_token: ''
+        required: true
       responses:
         '200':
           description: ''
@@ -166,48 +493,266 @@ components:
     RegisterRequest:
       title: RegisterRequest
       required:
-      - name
-      - email
-      - password
-      - phone_number
+        - email
+        - password
+        - register_token
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        register_token:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+          password: '1234567890'
+          register_token: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhpbWFuc2h1YWdnYXIwMEBnbWFpbC5jb20iLCJpYXQiOjE3MTYzNTQwMjMsImV4cCI6MTcxODk0NjAyM30.MazvHU59Vxm6JFxtPZ61rQtdLGt1hmxw8H8PkDq1JYI
+    LoginRequest:
+      title: LoginRequest
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+          password: '123456790'
+    CheckEMailRequest:
+      title: CheckEMailRequest
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+    VerifyOTPRequest:
+      title: VerifyOTPRequest
+      required:
+        - email
+        - otp_type
+        - otp
+        - data
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+        otp:
+          type: string
+        data:
+          type:
+            - string
+            - 'null'
+      examples:
+        - email: himanshuaggar00@gmail.com
+          otp_type: email
+          otp: '418098'
+          data: null
+    VerifyResetPINOTPRequest:
+      title: VerifyResetPINOTPRequest
+      required:
+        - email
+        - otp_type
+        - otp
+        - data
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+        otp:
+          type: string
+        data:
+          type:
+            - string
+            - 'null'
+      examples:
+        - email: himanshuaggar00@gmail.com
+          otp_type: reset_pin
+          otp: '500286'
+          data: null
+    VerifyResetPINOTPCopyRequest:
+      title: VerifyResetPINOTPCopyRequest
+      required:
+        - email
+        - otp_type
+        - otp
+        - data
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+        otp:
+          type: string
+        data:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+          otp_type: reset_password
+          otp: '500286'
+          data: qwertyuiop
+    VerifyOTPPhoneRequest:
+      title: VerifyOTPPhoneRequest
+      required:
+        - email
+        - otp_type
+        - otp
+        - data
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+        otp:
+          type: string
+        data:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+          otp_type: phone
+          otp: '246160'
+          data: '6729148994'
+    SendOTPRequest:
+      title: SendOTPRequest
+      required:
+        - email
+        - otp_type
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+          otp_type: email
+    SendResetPINOTPRequest:
+      title: SendResetPINOTPRequest
+      required:
+        - email
+        - otp_type
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+      examples:
+        - email: himanshuaggarwal100403@gmail.com
+          otp_type: reset_pin
+    SendResetPINOTPCopyRequest:
+      title: SendResetPINOTPCopyRequest
+      required:
+        - email
+        - otp_type
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+      examples:
+        - email: himanshuaggarwal100403@gmail.com
+          otp_type: reset_password
+    SendOTPPhoneRequest:
+      title: SendOTPPhoneRequest
+      required:
+        - email
+        - otp_type
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+          otp_type: phone
+    SetPasswordCopyRequest:
+      title: SetPasswordCopyRequest
+      required:
+        - email
+        - otp_type
+      type: object
+      properties:
+        email:
+          type: string
+        otp_type:
+          type: string
+      examples:
+        - email: himanshuaggar00@gmail.com
+          otp_type: email
+    SetFirstLoginPinRequest:
+      title: SetFirstLoginPinRequest
+      required:
+        - login_pin
+      type: object
+      properties:
+        login_pin:
+          type: string
+      examples:
+        - login_pin: '1234'
+    VerifyPINRequest:
+      title: VerifyPINRequest
+      required:
+        - login_pin
+      type: object
+      properties:
+        login_pin:
+          type: string
+      examples:
+        - login_pin: '1234'
+    UpdateProfileRequest:
+      title: UpdateProfileRequest
+      required:
+        - name
+        - gender
+        - date_of_birth
       type: object
       properties:
         name:
           type: string
-        email:
+        gender:
           type: string
-        password:
+        date_of_birth:
           type: string
-        phone_number:
-          type: integer
-          contentEncoding: int64
       examples:
-      - name: himanshu
-        email: qwertgb@gmail.com
-        password: '1234567890'
-        phone_number: 9876545678
-    LoginRequest:
-      title: LoginRequest
+        - name: Himanshu Aggawal
+          gender: male
+          date_of_birth: 2002-05-21T05:09:11.699Z
+    oauthrequest:
+      title: oauthrequest
       required:
-      - email
-      - password
+        - provider
+        - id_token
       type: object
       properties:
-        email:
+        provider:
           type: string
-        password:
+        id_token:
           type: string
       examples:
-      - email: qwertgb@gmail.com
-        password: '1234567890'
+        - provider: google
+          id_token: ''
   securitySchemes:
     httpBearer:
       type: http
       scheme: bearer
 security:
-- httpBearer: []
+  - httpBearer: []
 tags:
-- name: Misc
-  description: ''
-- name: Auth
-  description: ''
+  - name: Misc
+    description: ''
