@@ -46,21 +46,17 @@ const verifyOtp = async (req, res) => {
             await User.updatePIN(email, data);
             break;
         case "reset_password":
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(data, salt);
-            await User.findOneAndUpdate({ email }, { password: hashedPassword })
+            await User.updatePassword(email, data);
             break;
-        // await User.updatePassword(email, data);
-        // break;
         default:
             throw new BadRequestError("Invalid OTP Request type");
     }
     await otpRecord.deleteOne({ _id: otpRecord._id })
 
-    const user = await User.findOne({email});
-    
-    if(otp_type == 'email' && !user){
-        const pass_token = jwt.sign({email:email }, process.env.PASSWORD_SET_SECRET, {
+    const user = await User.findOne({ email });
+
+    if (otp_type == 'email' && !user) {
+        const pass_token = jwt.sign({ email: email }, process.env.PASSWORD_SET_SECRET, {
             expiresIn: process.env.PASSWORD_SET_SECRET_EXPIRY
         });
         res.status(StatusCodes.OK).json({

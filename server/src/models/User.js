@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const {
     BadRequestError,
     NotFoundError,
+    UnauthenticatedError,
 } = require("../errors");
 
 const UserSchema = new mongoose.Schema(
@@ -138,13 +139,53 @@ UserSchema.statics.updatePassword = async function (email, newPassword) {
 
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
+
+    if (this.blocked_until_password && this.blocked_until_password > new Date()) {
+        throw new UnauthenticatedError(
+            "Invalid Login attempts exceeded. Please try after 30 minutes."
+        );
+    }
     const isMatch = await bcrypt.compare(candidatePassword, this.password);
+
+    if (!isMatch) {
+        this.wrong_password_attempts += 1;
+        if (this.wrong_password_attempts >= 3) {
+            const blockDuration = 30 * 60 * 1000;
+            this.blocked_until_password = new Date(Date.now() + blockDuration);
+            this.wrong_password_attempts = 0;
+        }
+
+        await this.save();
+    } else {
+        this.wrong_password_attempts = 0;
+        this.blocked_until_password = null;
+        await this.save();
+    }
     return isMatch;
 }
+
 UserSchema.methods.comparePIN = async function comparePIN(candidatePIN) {
-    const isMatch = await bcrypt.compare(candidatePIN, this.login_pin);
+    if (this.blocked_until_pin && this.blocked_until_pin > new Date()) {
+        throw new UnauthenticatedError("Limit Exceeded,try after 30 minutes.");
+    }
+    const hashedPIN = this.login_pin;
+    const isMatch = await bcrypt.compare(candidatePIN, hashedPIN);
+    if (!isMatch) {
+        this.wrong_pin_attempts += 1;
+        if (this.wrong_pin_attempts > 3) {
+            const blockDuration = 30 * 60 * 1000;
+            this.blocked_until_pin = new Date(Date.now() + blockDuration);
+            this.wrong_pin_attempts = 0;
+        }
+        await this.save();
+    } else {
+        this.wrong_pin_attempts = 0;
+        this.blocked_until_pin = null;
+        await this.save();
+    }
     return isMatch;
 };
+
 UserSchema.statics.updatePIN = async function (email, newPin) {
     try {
         const user = await this.findOne({ email });

@@ -7,10 +7,6 @@ const bcrypt = require("bcryptjs");
 
 const register = async (req, res) => {
 
-    // const user = await User.create({...req.body});
-    // const token = user.createJWT();
-    // res.status(StatusCodes.CREATED).json({ user :{ name : user.name}, token});
-
     const { email, password, register_token } = req.body;
     if (!email || !password || !register_token) {
         throw new BadRequestError("Invalid Request");
@@ -40,36 +36,6 @@ const register = async (req, res) => {
     }
 }
 
-const setpassword = async (req, res) => {
-    const { email, password, register_token } = req.body;
-    if (!email || !password || !register_token) {
-        throw new BadRequestError("Invalid Request");
-    }
-
-    const user = await User.findOne({ email });
-    if (user) {
-        throw new BadRequestError("User already exist!");
-    }
-
-    try {
-        const payload = jwt.verify(register_token, process.env.PASSWORD_SET_SECRET);
-        if (payload.email !== email) {
-            throw new BadRequestError("Invalid Token or expired");
-        }
-
-        const new_user = await User.create({ email: email, password: password });
-        const access_token = new_user.createAccessToken();
-        const refresh_token = new_user.createRefreshToken();
-        res.status(StatusCodes.CREATED).json({
-            user: { userId: new_user.id, email: new_user.email },
-            tokens: { access_token: access_token, refresh_token: refresh_token },
-        });
-    } catch (error) {
-        console.log("@@@", error)
-        throw new BadRequestError("Invalid Body");
-    }
-
-}
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -86,14 +52,34 @@ const login = async (req, res) => {
     const isPasswordCorrect = await user.comparePassword(password);
 
     if (!isPasswordCorrect) {
-        throw new UnauthenticatedError("Invalid Credentials");
+        let message;
+        if (user.blocked_until_password && user.blocked_until_password > new Date()) {
+            const remainingMinutes = Math.ceil(
+                (user.blocked_until_password - new Date()) / (60 * 1000)
+            );
+            message = `Your account is blocked for password. Please try again after ${remainingMinutes} minute(s).`;
+        } else {
+            const attemptsRemaining = 3 - user.wrong_password_attempts;
+            message = attemptsRemaining > 0
+                ? `Invalid password, ${attemptsRemaining} attempts remaining`
+                : "Invalid Login attempts exceeded. Please try after 30 minutes.";
+        }
+        throw new UnauthenticatedError(message);
     }
 
     const access_token = user.createAccessToken();
     const refresh_token = user.createRefreshToken();
+    let phone_exist = false;
+    let login_pin_exist = false;
 
-    const token = user.createJWT();
-    res.status(StatusCodes.OK).json({ user: { userId: user.id, email: user.email }, tokens: { access_token: access_token, refresh_token: refresh_token } });
+    if (user.phone_number) {
+        phone_exist = true;
+    }
+    if (user.login_pin) {
+        login_pin_exist = true;
+    }
+
+    res.status(StatusCodes.OK).json({ user: { userId: user.id, email: user.email, phone_exist, login_pin_exist }, tokens: { access_token: access_token, refresh_token: refresh_token } });
 }
 
 const oauth = async (req, res) => {
@@ -178,5 +164,5 @@ const logout = async (req, res) => {
 };
 
 module.exports = {
-    setpassword, login, oauth, logout, refreshToken, register
+    login, oauth, logout, refreshToken, register
 }
