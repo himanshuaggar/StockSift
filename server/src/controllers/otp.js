@@ -35,7 +35,7 @@ const verifyOtp = async (req, res) => {
             await User.findOneAndUpdate({ email }, { phone_number: data, phone_verified: true });
             break;
         case "email":
-            await User.findOneAndUpdate({ email }, { email_verified: true });
+            // await User.findOneAndUpdate({ email }, { email_verified: true });
             break;
         case "reset_pin":
             if (!data || data.length != 4) {
@@ -58,10 +58,11 @@ const verifyOtp = async (req, res) => {
     await otpRecord.deleteOne({ _id: otpRecord._id })
 
     const user = await User.findOne({email});
-    const pass_token = jwt.sign({ userId: user.id}, process.env.PASSWORD_SET_SECRET, {
-        expiresIn: process.env.PASSWORD_SET_SECRET_EXPIRY
-    });
-    if(otp_type == 'email'){
+    
+    if(otp_type == 'email' && !user){
+        const pass_token = jwt.sign({email:email }, process.env.PASSWORD_SET_SECRET, {
+            expiresIn: process.env.PASSWORD_SET_SECRET_EXPIRY
+        });
         res.status(StatusCodes.OK).json({
             msg: "OTP Verified",
             pass_token: pass_token,
@@ -80,10 +81,6 @@ const sendOtp = async (req, res) => {
     if (!email || !otp_type) {
         throw new BadRequestError("Invalid body for request");
     }
-    const otp = await generateOtp();
-    const otpPayload = { email: email, otp: otp, otp_type: otp_type };
-    await OTP.create(otpPayload);
-
     const user = await User.findOne({ email });
 
     if (!user && otp_type == "phone") {
@@ -96,6 +93,9 @@ const sendOtp = async (req, res) => {
     if (otp_type == "phone" && user.phone_number) {
         throw new BadRequestError("Phone number already exist!");
     }
+    const otp = await generateOtp();
+    const otpPayload = { email: email, otp: otp, otp_type: otp_type };
+    await OTP.create(otpPayload);
 
 
     res.status(StatusCodes.OK).json({

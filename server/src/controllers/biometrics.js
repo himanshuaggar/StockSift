@@ -16,7 +16,7 @@ const uploadBiometric = async (req, res) => {
     throw new BadRequestError("provide public key");
   }
   const accessToken = req.headers.authorization?.split(" ")[1];
-  const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(accessToken, process.env.REGISTER_SECRET);
   const userId = decodedToken.userId;
 
   const updatedUser = await User.findByIdAndUpdate(
@@ -39,7 +39,7 @@ const verifyBiometric = async (req, res) => {
     throw new BadRequestError("provide biometric signature ");
   }
   const accessToken = req.headers.authorization?.split(" ")[1];
-  const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(accessToken, process.env.REGISTER_SECRET);
   const userId = decodedToken.userId;
 
   const user = await User.findById(userId);

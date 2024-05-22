@@ -5,54 +5,14 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 
-const register = async ( req, res ) => {
-    
-    const user = await User.create({...req.body});
-    const token = user.createJWT();
-    res.status(StatusCodes.CREATED).json({ user :{ name : user.name}, token});
+const register = async (req, res) => {
 
-}
+    // const user = await User.create({...req.body});
+    // const token = user.createJWT();
+    // res.status(StatusCodes.CREATED).json({ user :{ name : user.name}, token});
 
-const setpassword = async (req, res) => {
-    // try {
-    //     const { email, password, pass_token } = req.body;
-    //     if (!email || !password || !pass_token) {
-    //         throw new BadRequestError("invalid Request")
-    //     }
-    //     const user = await User.create({ email });
-    //     const payload = jwt.verify(pass_token, process.env.PASSWORD_SET_SECRET)
-    //     if (payload.user !== user.id) {
-    //         throw new NotFoundError("Onvalid Token");
-    //     }
-    //     if (!user || user.email_verified) {
-    //         throw new BadRequestError("Password set! use reset password")
-    //     }
-    //     if (!user && user.password) {
-    //         throw new BadRequestError("Password set! use reset password")
-    //     }
-
-    //     const salt = await bcrypt.genSalt(10);
-    //     const hashedpassword = await bcrypt.hash(password, salt);
-
-    //     const updateduser = await User.findOneAndUpdate(user.id, {
-    //         password: hashedpassword
-    //     });
-
-    //     console.log(updateduser);
-
-    //     const access_token = user.createRefreshToken();
-    //     const refresh_token = user.createRefreshToken();
-    //     res.status(StatusCodes.CREATED).json({
-    //         user: { name: updateduser.name, userId: updateduser.id },
-    //         token: { access_token: access_token, refesh_token: refresh_token },
-    //     })
-
-    // } catch (error) {
-    //     console.log(error);
-    //     throw new BadRequestError("check pass token or body");
-    // }
-    const { email, password, pass_token } = req.body;
-    if (!email || !password || !pass_token) {
+    const { email, password, register_token } = req.body;
+    if (!email || !password || !register_token) {
         throw new BadRequestError("Invalid Request");
     }
 
@@ -62,7 +22,37 @@ const setpassword = async (req, res) => {
     }
 
     try {
-        const payload = jwt.verify(pass_token, process.env.PASSWORD_SET_SECRET);
+        const payload = jwt.verify(register_token, process.env.REGISTER_SECRET);
+        if (payload.email !== email) {
+            throw new BadRequestError("Invalid Token or expired");
+        }
+
+        const new_user = await User.create({ email: email, password: password });
+        const access_token = new_user.createAccessToken();
+        const refresh_token = new_user.createRefreshToken();
+        res.status(StatusCodes.CREATED).json({
+            user: { userId: new_user.id, email: new_user.email },
+            tokens: { access_token: access_token, refresh_token: refresh_token },
+        });
+    } catch (error) {
+        console.log("@@@", error)
+        throw new BadRequestError("Invalid Body");
+    }
+}
+
+const setpassword = async (req, res) => {
+    const { email, password, register_token } = req.body;
+    if (!email || !password || !register_token) {
+        throw new BadRequestError("Invalid Request");
+    }
+
+    const user = await User.findOne({ email });
+    if (user) {
+        throw new BadRequestError("User already exist!");
+    }
+
+    try {
+        const payload = jwt.verify(register_token, process.env.PASSWORD_SET_SECRET);
         if (payload.email !== email) {
             throw new BadRequestError("Invalid Token or expired");
         }
@@ -87,7 +77,7 @@ const login = async (req, res) => {
     if (!email || !password) {
         throw new BadRequestError("Please provide email and password");
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email });
 
     if (!user) {
         throw new UnauthenticatedError("Invalid Credentials");
@@ -99,8 +89,11 @@ const login = async (req, res) => {
         throw new UnauthenticatedError("Invalid Credentials");
     }
 
+    const access_token = user.createAccessToken();
+    const refresh_token = user.createRefreshToken();
+
     const token = user.createJWT();
-    res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+    res.status(StatusCodes.OK).json({ user: { userId: user.id, email: user.email }, tokens: { access_token: access_token, refresh_token: refresh_token } });
 }
 
 const oauth = async (req, res) => {
@@ -127,7 +120,7 @@ const refreshToken = async (req, res) => {
                 refresh_token,
                 process.env.REFRESH_TOKEN_SECRET,
                 process.env.REFRESH_SOCKET_TOKEN_EXPIRY,
-                process.env.JWT_SECRET,
+                process.env.REGISTER_SECRET,
                 process.env.ACCESS_TOKEN_EXPIRY
             ));
         }
@@ -178,7 +171,7 @@ async function generateRefreshTokens(
 
 const logout = async (req, res) => {
     const accessToken = req.headers.authorization?.split(" ")[1];
-    const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(accessToken, process.env.REGISTER_SECRET);
     const userId = decodedToken.userId;
     await User.updateOne({ _id: userId }, { $unset: { biometricKey: 1 } });
     res.status(StatusCodes.OK).json({ message: "User logged out successfully" });

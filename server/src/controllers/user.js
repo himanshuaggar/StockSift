@@ -13,7 +13,7 @@ const updateProfile = async (req, res) => {
 
   const accessToken = req.headers.authorization?.split(" ")[1];
 
-  const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(accessToken, process.env.REGISTER_SECRET);
   const userId = decodedToken.userId;
 
   const updatedFields = {};
@@ -24,7 +24,7 @@ const updateProfile = async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, {
     new: true,
     runValidators: true,
-    // select: "-password",
+    select: "-password",
   });
 
   if (!updatedUser) {
@@ -40,7 +40,7 @@ const setLoginPinFirst = async (req, res) => {
     throw new BadRequestError("Bad Request body");
   }
   const accessToken = req.headers.authorization?.split(" ")[1];
-  const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(accessToken, process.env.REGISTER_SECRET);
   const userId = decodedToken.userId;
   const user = await User.findById(userId);
 
@@ -92,7 +92,7 @@ const verifyPin = async (req, res) => {
     throw new BadRequestError("Bad Request body");
   }
   const accessToken = req.headers.authorization?.split(" ")[1];
-  const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(accessToken, process.env.REGISTER_SECRET);
   const userId = decodedToken.userId;
   const user = await User.findById(userId);
   if (!user) {
@@ -151,7 +151,7 @@ const verifyPin = async (req, res) => {
 const getProfile = async (req, res) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
 
-  const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(accessToken, process.env.REGISTER_SECRET);
   const userId = decodedToken.userId;
 
   const user = await User.findById(userId);

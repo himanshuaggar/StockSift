@@ -5,6 +5,7 @@ const { verifyOtp, sendOtp } = require('../controllers/otp');
 const auth = require('../middleware/authentication');
 const { updateProfile, setLoginPinFirst, verifyPin } = require('../controllers/user');
 const { uploadBiometric, verifyBiometric } = require('../controllers/biometrics');
+const { signInWithOauth } = require('../controllers/oauth');
 
 const router = express.Router();
 
@@ -12,11 +13,12 @@ router.get('/',(req,res) => {
     res.send("Auth")
 })
 router.post("/register", register);
-router.post("/login", login)
+router.post("/login", login);
+router.post("/oauth", signInWithOauth);
 router.post('/check-email', checkMail);
 router.post("/verify-otp", verifyOtp);
 router.post("/send-otp", sendOtp);
-router.post("/set-password", setpassword);
+// router.post("/set-password", setpassword);
 router.put('/profile',auth, updateProfile);
 router.put('/set-pin',auth, setLoginPinFirst);
 router.post("/verify-pin", auth, verifyPin);
