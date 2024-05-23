@@ -25,12 +25,13 @@ const PersonalDetailScreen = () => {
     date_of_birth: "",
     gender: "",
   });
-  
+
   const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
     {}
   );
   const [loading, setLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleOnChange = (text: string, fieldName: string) => {
     setInputs((prevInputs) => ({
@@ -67,7 +68,8 @@ const PersonalDetailScreen = () => {
   const handleOnSubmit = async () => {
     if (validateForm()) {
       setLoading(true);
-      navigate("PinScreen")
+      // navigate("PinScreen")
+      await dispatch(UpdateProfile(inputs));
       setLoading(false);
     }
   };

@@ -1,18 +1,12 @@
-import ReactNativeBiometrics, { BiometryTypes } from "react-native-biometrics";
+import ReactNativeBiometrics from "react-native-biometrics";
+import { appAxios } from "../redux/apiConfig";
+import { token_storage } from "../redux/storage";
 
-
-// Debug Biometric & do FaceID
-
-const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
+const rnBiometrics = new ReactNativeBiometrics();
 
 export const checkBiometrics = async () => {
   try {
     const { biometryType } = await rnBiometrics.isSensorAvailable();
-    if (biometryType === BiometryTypes.Biometrics) {
-      console.log("biomnhgtre")
-    }
-    console.log("qwrtyk,mnbvcgtyujkm")
-    console.log(biometryType);
     return biometryType;
   } catch (error) {
     return null;
@@ -47,7 +41,7 @@ export const deleteBiometricPublicKey = async () => {
 };
 
 export const loginWithBiometrics =
-  async (userID: string) => {
+  (userID: string) => async (dispatch: any) => {
     try {
       const isBiometricAvailable = await checkBiometrics();
       if (!isBiometricAvailable) {
@@ -57,7 +51,9 @@ export const loginWithBiometrics =
 
       if (!keysExist) {
         const { publicKey } = await rnBiometrics.createKeys();
-        console.log("public Key", publicKey);
+        const res = await appAxios.post("/auth/upload-biometric", {
+          public_key: publicKey,
+        });
       }
 
       const { success, signature } = await rnBiometrics.createSignature({
@@ -68,16 +64,21 @@ export const loginWithBiometrics =
       if (!success) {
         throw new Error("Biometrics authentication failed!");
       }
-      console.log(signature)
-      if(signature){
-        return true;
-      }else{
-        return false;
-      }
+      const res = await appAxios.post("/auth/verify-biometric", {
+        signature: signature,
+      });
+      token_storage.set(
+        "socket_access_token",
+        res.data.socket_tokens.socket_access_token
+      );
+      token_storage.set(
+        "socket_refresh_token",
+        res.data.socket_tokens.socket_refresh_token
+      );
+      return { msg: "Success", result: true };
     } catch (error: any) {
-        console.log("Error@@", JSON.stringify(error));
-        return false;
-        }
+      return { msg: error?.response?.data?.msg, result: false };
+    }
   };
 
 export default {

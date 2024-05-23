@@ -8,12 +8,16 @@ import CustomNumberPad from "../../components/inputs/CustomNumberPad";
 import OTPInput from "../../components/inputs/OTPInput";
 import BackButton from "../../components/global/BackButton";
 import { resetAndNavigate } from "../../utils/NavigationUtil";
-
+import { useAppDispatch } from "../../redux/reduxHook";
+import { SetLoginPin } from "../../redux/actions/userAction";
 
 const ConfirmPinScreen = ({ route }: any) => {
+
+  const dispatch = useAppDispatch();
   const [otpValues, setOtpValues] = useState(["", "", "", ""]);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [otpError, setOtpError] = useState<string | null>(null);
+  
   const handlePressNumber = (number: number | string) => {
     if (focusedIndex < otpValues.length) {
       const newOtpValues = [...otpValues];
@@ -50,8 +54,9 @@ const ConfirmPinScreen = ({ route }: any) => {
     }
 
     if (!valid) {
-        resetAndNavigate("AccountProtectedScreen")
-    }
+      await dispatch(
+        SetLoginPin({ login_pin: otpValues.join("") })
+      );    }
   };
 
   return (
@@ -62,10 +67,10 @@ const ConfirmPinScreen = ({ route }: any) => {
         fontFamily={FONTS.Medium}
         style={styles.mainContainer}
       >
-        Confirm your Groww PIN
+        Confirm your StockSift PIN
       </CustomText>
       <CustomText style={styles.subText}>
-        Re-enter your Groww PIN for confimation.
+        Re-enter your StockSift PIN for confimation.
       </CustomText>
       <OTPInput
         otpValues={otpValues}

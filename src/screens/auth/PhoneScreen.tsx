@@ -17,22 +17,27 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Colors as colorw } from "../../constants/Colors";
 import OtpTimer from "../../components/auth/OtpTimer";
 import { navigate } from "../../utils/NavigationUtil";
-
+import { useAppDispatch, useAppSelector } from "../../redux/reduxHook";
+import { SendOTP, VerifyOTP } from "../../redux/actions/userAction";
+import { selectUser } from "../../redux/reducers/userSlice";
+import { useCustomColorScheme } from "../../navigation/Theme";
 
 const PhoneScreen = () => {
     const { colors } = useTheme();
-    const theme = useColorScheme();;
+    const user = useAppSelector(selectUser);
+    const theme = useCustomColorScheme();
     const [phoneNumber, setPhoneNumber] = useState("");
     const [loading, setLoading] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
     const [otp, setOtp] = useState("");
     const [otpError, setOtpError] = useState("");
+    const dispatch = useAppDispatch();
 
     const handleSendOTP = async () => {
         setLoading(true);
-        
-        setOtpSent(true);
-        setLoading(false);
+    await dispatch(SendOTP({ email: user.email || "", otp_type: "phone" }));
+    setOtpSent(true);
+    setLoading(false);
     };
 
     const handleVerifyOTP = async () => {
@@ -41,7 +46,14 @@ const PhoneScreen = () => {
             return;
         }
         setLoading(true);
-        navigate("PersonalDetailScreen")
+        await dispatch(
+            VerifyOTP({
+              email: user.email || "",
+              otp_type: "phone",
+              data: phoneNumber,
+              otp: otp,
+            })
+          );
         
         setLoading(false);
     };

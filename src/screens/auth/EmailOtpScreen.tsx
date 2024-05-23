@@ -12,8 +12,7 @@ import { useAppDispatch } from '../../redux/reduxHook';
 import OtpTimer from '../../components/auth/OtpTimer';
 
 
-
-const EmailOtpScreen = ({route}:any) => {
+const EmailOtpScreen = ({ route }: any) => {
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState("");
   const dispatch = useAppDispatch();
@@ -24,13 +23,18 @@ const EmailOtpScreen = ({route}:any) => {
       return;
     }
     setLoading(true);
-    setTimeout(()=> {
-      navigate("SetPasswordScreen", {
-        email: route.params.email
+    await dispatch(
+      VerifyOTP({
+        email: route.params.email,
+        otp: otp,
+        otp_type: "email",
+        data: null,
       })
-      setLoading(false);
-    },2000);
-    
+    );
+
+    setLoading(false);
+
+
   };
 
   const resendOTPHandler = async () => {
@@ -79,5 +83,3 @@ const EmailOtpScreen = ({route}:any) => {
 }
 
 export default EmailOtpScreen
-
-const styles = StyleSheet.create({})

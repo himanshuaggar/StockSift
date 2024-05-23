@@ -1,5 +1,5 @@
 import { Alert, Image, SafeAreaView, StyleSheet, Text, useColorScheme, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import CustomSafeAreaView from '../../components/global/CustomSafeAreaView'
 import CustomText from '../../components/global/CustomText'
 import { FONTS } from '../../constants/Fonts'
@@ -11,23 +11,22 @@ import {
     screenWidth,
 } from "../../utils/Scaling";
 import SocialLoginButton from "../../components/auth/SocailLoginButton";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/Ionicons.js";
 import GoogleIcon from "../../assets/images/google.png";
 import TouchableText from '../../components/auth/TouchableText'
 import BottomText from '../../components/auth/BottomText'
 import { signInwithGoogle } from "../../redux/SocialLogin.tsx"
 import { navigate } from '../../utils/NavigationUtil.tsx'
 
-
-
 type Props = {}
 
 const LoginScreen = (props: Props) => {
     const theme = useColorScheme();
+    
     return (
         <CustomSafeAreaView>
             <View style={styles.container}>
-                <CustomText variant="h1" fontFamily={FONTS.Medium}>LoginScreen</CustomText>
+                <CustomText variant="h1" fontFamily={FONTS.Bold}>StockSift</CustomText>
                 <CustomText variant="h7" style={styles.subText} fontFamily={FONTS.Bold}>
                     Invest • Pay • Loans
                 </CustomText>

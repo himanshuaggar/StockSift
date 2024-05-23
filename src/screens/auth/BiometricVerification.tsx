@@ -10,6 +10,10 @@ import Logo from "../../assets/images/logo.png";
 import TouchableText from "../../components/auth/TouchableText";
 import RoundOTPInput from "../../components/inputs/RoundOTPInput";
 import { loginWithBiometrics } from "../../utils/BiometricsUtils";
+import { useAppDispatch, useAppSelector } from "../../redux/reduxHook";
+import { Logout, VerifyPin } from "../../redux/actions/userAction";
+import { selectUser } from "../../redux/reducers/userSlice";
+import User from "../../../server/src/models/User";
 
 const initialState = ["", "", "", ""];
 
@@ -22,8 +26,9 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
-  useEffect(() => {}, []);
   const handlePressNumber = (number: number | string) => {
     if (focusedIndex < otpValues.length) {
       const newOtpValues = [...otpValues];
@@ -43,13 +48,16 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
     }
   };
   const handleBiometricVerification = async () => {
-    const isVerified = await loginWithBiometrics("1234")
-    
-    console.log(isVerified);
+    const { msg, result } = await dispatch(
+      loginWithBiometrics(user.userId || "")
+    );
+    if (!result) {
+      setOtpError(msg);
+      return;
+    }
 
-    if (isVerified) {
+    if (result) {
       setOtpValues(["B", "I", "O", "P"]);
-      
     }
   };
 
@@ -68,13 +76,17 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
     });
     if (!valid) {
       setLoading(true);
-      await setTimeout(() => {
-        setOtpValues(initialState);
+      const { result, msg } = await dispatch(
+        VerifyPin({ login_pin: otpValues.join("") })
+      );
+      if (!result) {
+        setOtpError(msg);
+      } else {
+        resetAndNavigate("HomeScreen");
+      }
+      setOtpValues(initialState);
       setFocusedIndex(0);
       setLoading(false);
-      resetAndNavigate("HomeScreen");
-      },2000)
-      
     }
   };
 
@@ -91,14 +103,14 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
       <View style={styles.container}>
         <Image source={Logo} style={styles.logo} />
         <CustomText variant="h6" fontFamily={FONTS.Bold}>
-          Enter Groww PIN
+          Enter StockSift PIN
         </CustomText>
         <View style={styles.emailContainer}>
-          <CustomText style={styles.subText}>a*******2@gmail.com</CustomText>
+          <CustomText style={styles.subText}>{user?.email}</CustomText>
           <TouchableText
             firstText="Logout"
             style={styles.logoutText}
-            onPress={() => {}}
+            onPress={() => {dispatch(Logout())}}
           />
         </View>
       </View>

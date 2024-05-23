@@ -9,11 +9,14 @@ import { goBack, navigate, resetAndNavigate } from "../../utils/NavigationUtil";
 import { GlobalStyles } from "../../styles/GlobalStyles";
 import TouchableText from "../../components/auth/TouchableText";
 import { RFValue } from "react-native-responsive-fontsize";
+import { useAppDispatch } from "../../redux/reduxHook";
+import { EmailLogin } from "../../redux/actions/userAction";
 
 const EmailPasswordScreen = ({ route }: any) => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
   const validate = () => {
     if (!validatePasswordLength(password)) {
       setPasswordError("Please enter a valid password");
@@ -26,7 +29,7 @@ const EmailPasswordScreen = ({ route }: any) => {
     setLoading(true);
 
     if (validate()) {
-      navigate('AuthVerificationScreen')
+      await dispatch(EmailLogin({email: route.params.email, password:password}));
     }
     setLoading(false);
   };

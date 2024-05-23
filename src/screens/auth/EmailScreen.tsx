@@ -29,9 +29,10 @@ const EmailScreen: FC = () => {
     setLoading(true);
     if (validate()) {
       //if user exist with mail
-      navigate("EmailPasswordScreen", {
-        email: email,
-      })
+      // navigate("EmailPasswordScreen", {
+      //   email: email,
+      // })
+      await dispatch(CheckEmail(({email : email.toLowerCase()})));
 
       // if user doesn't exist
       // navigate("EmailOtpScreen",{

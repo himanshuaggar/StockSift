@@ -12,6 +12,8 @@ import { useTheme } from "@react-navigation/native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { resetAndNavigate } from "../../utils/NavigationUtil";
 import CustomText from "../../components/global/CustomText";
+import { useAppDispatch } from "../../redux/reduxHook";
+import { SendOTP, VerifyOTP } from "../../redux/actions/userAction";
 
 interface PasswordInputs {
   password: string;
@@ -21,6 +23,7 @@ interface PasswordInputs {
 
 const ForgotPassword = ({ route }: any) => {
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
   const [otpSent, setOtpSent] = useState(false);
   const [inputs, setInputs] = useState<PasswordInputs>({
     password: "",
@@ -70,7 +73,9 @@ const ForgotPassword = ({ route }: any) => {
   const handleUpdatePassword = async () => {
     if (validateForm()) {
       setLoading(true);
-      
+      await dispatch(
+        SendOTP({ email: route.params.email || "", otp_type: "reset_password" })
+      );
       setOtpSent(true);
       setLoading(false);
     }
@@ -78,7 +83,14 @@ const ForgotPassword = ({ route }: any) => {
 
   const verifyOtp = async () => {
     setLoading(true);
-    
+    await dispatch(
+      VerifyOTP({
+        email: route.params.email || "",
+        otp_type: "reset_password",
+        data: inputs.confirmpassword,
+        otp: inputs.otp,
+      })
+    );
     setLoading(false);
   };
 

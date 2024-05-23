@@ -10,6 +10,7 @@ import PinScreen from "../screens/auth/PinScreen";
 import ConfirmPinScreen from "../screens/auth/ConfirmPinScreen";
 import AccountProtectedScreen from "../screens/auth/AccountProtectedScreen";
 import AuthVerificationScreen from "../screens/auth/AuthVerificationSCreen";
+import SplashScreen from "../screens/deeplinks/SplashScreen";
 
 export const authStack = [
     {
@@ -57,12 +58,10 @@ export const authStack = [
         name : "AuthVerificationScreen",
         component: AuthVerificationScreen,
     },
-
-    
-    // {
-    //     name : "LoginScreen",
-    //     component: LoginScreen,
-    // },
+    {
+        name : "SplashScreen",
+        component: SplashScreen,
+    },
 
 ];
 

@@ -48,6 +48,7 @@ interface LoginPin {
 export const CheckEmail = (data: CheckEmail) => async (dispatch: any) => {
   try {
     const res = await axios.post(CHECK_EMAIL, data);
+    console.log(res.data);
     console.log("CHECK EMAIL-->", res.data);
     let path = res.data.isExist ? "EmailPasswordScreen" : "EmailOtpScreen";
     navigate(path, { email: data.email });

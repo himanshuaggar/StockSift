@@ -4,9 +4,10 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import Navigation from './src/navigation/Navigation'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from 'react-redux';
-import { store } from './src/redux/store';
+import { persistor, store } from './src/redux/store';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './ToastConfig';
+import { PersistGate } from 'redux-persist/integration/react';
 
 GoogleSignin.configure({
   webClientId:
@@ -21,9 +22,12 @@ const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
-      <Navigation />
-      <Toast visibilityTime={3000} config={toastConfig} bottomOffset={0} position='bottom'/>
+        <PersistGate loading={null} persistor={persistor}>
+          <Navigation />
+        </PersistGate>
       </Provider>
+      <Toast visibilityTime={3000} config={toastConfig} bottomOffset={0} position='bottom' />
+
     </GestureHandlerRootView>
   )
 }
