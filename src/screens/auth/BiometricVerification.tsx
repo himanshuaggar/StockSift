@@ -82,7 +82,7 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
       if (!result) {
         setOtpError(msg);
       } else {
-        resetAndNavigate("HomeScreen");
+        resetAndNavigate("BottomTab");
       }
       setOtpValues(initialState);
       setFocusedIndex(0);

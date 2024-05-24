@@ -11,7 +11,7 @@ import { resetAndNavigate } from "../../utils/NavigationUtil";
 const AccountProtectedScreen = () => {
   useEffect(()=>{
     setTimeout(()=>{
-      resetAndNavigate('HomeScreen')
+      resetAndNavigate('BottomTab')
     },3000)
   },[])
   return (

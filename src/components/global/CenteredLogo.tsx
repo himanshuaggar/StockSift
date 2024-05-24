@@ -1,6 +1,6 @@
 import { View, Image, StyleSheet } from "react-native";
 import React from "react";
-import Logo from "../../assets/images/logo_text.png";
+import Logo from "../../assets/images/stocksift_bg_removed.png";
 import { normalizeHeight } from "../../utils/Scaling";
 
 const CenteredLogo = () => {

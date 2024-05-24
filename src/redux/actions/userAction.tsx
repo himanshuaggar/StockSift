@@ -229,6 +229,7 @@ export const VerifyPin = (data: LoginPin) => async (dispatch: any) => {
 export const CheckProfile = () => async (dispatch: any) => {
   try {
     const res = await appAxios.get("/auth/profile");
+    console.log(res);
     const { userId, email, login_pin_exist, phone_exist, name } = res.data;
     await dispatch(setUser(res.data));
     if (!phone_exist) {
@@ -240,6 +241,15 @@ export const CheckProfile = () => async (dispatch: any) => {
     } else {
       resetAndNavigate("AuthVerificationScreen");
     }
+  } catch (error: any) {
+    console.log("CHECK P0ROFILE ->", error);
+  }
+};
+
+export const refetchUser = () => async (dispatch: any) => {
+  try {
+    const res = await appAxios.get("/auth/profile");
+    await dispatch(setUser(res.data));
   } catch (error: any) {
     console.log("PROFILE ->", error);
   }

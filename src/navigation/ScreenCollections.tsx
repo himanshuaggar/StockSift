@@ -11,6 +11,7 @@ import ConfirmPinScreen from "../screens/auth/ConfirmPinScreen";
 import AccountProtectedScreen from "../screens/auth/AccountProtectedScreen";
 import AuthVerificationScreen from "../screens/auth/AuthVerificationSCreen";
 import SplashScreen from "../screens/deeplinks/SplashScreen";
+import BottomTab from "./BottomTab";
 
 export const authStack = [
     {
@@ -70,6 +71,10 @@ export const dashboardStack = [
         name : "HomeScreen",
         component: HomeScreen,
     },
+    {
+        name: "BottomTab",
+        component: BottomTab,
+      },
 ]
 
 

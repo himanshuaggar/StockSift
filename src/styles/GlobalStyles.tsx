@@ -10,7 +10,7 @@ export const GlobalStyles = StyleSheet.create({
     left: 20,
   },
   tabIcon: {
-    width: RFValue(18),
-    height: RFValue(18),
+    width: RFValue(24),
+    height: RFValue(24),
   },
 });

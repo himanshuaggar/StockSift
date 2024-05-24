@@ -3,7 +3,7 @@ const { register, login, setpassword, refreshToken, logout } = require('../contr
 const { checkMail } = require('../controllers/email');
 const { verifyOtp, sendOtp } = require('../controllers/otp');
 const auth = require('../middleware/authentication');
-const { updateProfile, setLoginPinFirst, verifyPin } = require('../controllers/user');
+const { updateProfile, setLoginPinFirst, verifyPin, getProfile } = require('../controllers/user');
 const { uploadBiometric, verifyBiometric } = require('../controllers/biometrics');
 const { signInWithOauth } = require('../controllers/oauth');
 
@@ -20,6 +20,7 @@ router.post("/verify-otp", verifyOtp);
 router.post("/send-otp", sendOtp);
 // router.post("/set-password", setpassword);
 router.put('/profile',auth, updateProfile);
+router.get('/profile',auth, getProfile);
 router.post('/set-pin',auth, setLoginPinFirst);
 router.post("/verify-pin", auth, verifyPin);
 router.post("/upload-biometric", auth, uploadBiometric);
