@@ -20,7 +20,7 @@ router.post("/verify-otp", verifyOtp);
 router.post("/send-otp", sendOtp);
 // router.post("/set-password", setpassword);
 router.put('/profile',auth, updateProfile);
-router.put('/set-pin',auth, setLoginPinFirst);
+router.post('/set-pin',auth, setLoginPinFirst);
 router.post("/verify-pin", auth, verifyPin);
 router.post("/upload-biometric", auth, uploadBiometric);
 router.post("/verify-biometric", auth, verifyBiometric);
