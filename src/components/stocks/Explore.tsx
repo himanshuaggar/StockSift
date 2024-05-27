@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import {
   Image,
   RefreshControl,
@@ -14,12 +14,10 @@ import { FONTS } from "../../constants/Fonts";
 import { useTheme } from "@react-navigation/native";
 import DottedLine from "../../assets/images/dotted.png";
 import StockCard from "./StockCard";
+import { mostBoughtData } from "../../utils/staticData";
 import ProductAndTools from "./ProductAndTools";
 import GainerAndLoser from "./GainerAndLoser";
 import InfoText from "../global/InfoText";
-import { useAppDispatch, useAppSelector } from "../../redux/reduxHook";
-import { selectStocks } from "../../redux/reducers/stockSlice";
-import { getAllStocks } from "../../redux/actions/stockAction";
 
 interface SepratorProps {
   label: string;
@@ -53,22 +51,11 @@ const Seprator: FC<SepratorProps> = ({ label, seeMore }) => {
 };
 
 const Explore = () => {
-  const dispatch = useAppDispatch();
-  const stockData = useAppSelector(selectStocks);
   const [refereshing, setRefreshing] = useState(false);
   const refreshHandler = async () => {
-    await fetchStocks();
     setRefreshing(false);
   };
-
-  const fetchStocks = async () => {
-    await dispatch(getAllStocks());
-  };
-
-  useEffect(() => {
-    fetchStocks();
-  }, []);
-
+  console.log(mostBoughtData);
   return (
     <Tabs.ScrollView
       showsVerticalScrollIndicator={false}
@@ -82,21 +69,21 @@ const Explore = () => {
         />
       }
     >
-      <Seprator label="Most bought on Groww" />
-      <StockCard data={stockData} />
+      <Seprator label="Most bought on StockSift" />
+      <StockCard data={mostBoughtData} />
       <Seprator label="Product & Tools" />
       <ProductAndTools />
       <GainerAndLoser />
       <Seprator label="Top Intraday" seeMore />
-      <StockCard data={stockData} />
+      <StockCard data={mostBoughtData} />
 
       <Seprator label="Stock in news" seeMore />
-      <StockCard data={stockData} />
+      <StockCard data={mostBoughtData} />
       <InfoText
         data={[
-          "Groww Invest Tech Pvt. Ltd.",
-          "(Former;y known as Nextbillion Technologoy Pvt. Ltd.)",
-          "SEBI-Stock Broker -INZ000301838 | Member of NSE,BSE",
+          "This app is made for demo purpose only!",
+          "Made by Himanshu Aggarwal",
+          "COntact at himanshuaggar00@gmail.com",
           "DP - IN-DP-417-2019",
         ]}
       />

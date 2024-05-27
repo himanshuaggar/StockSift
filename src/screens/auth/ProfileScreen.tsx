@@ -106,7 +106,7 @@ const ProfileScreen = () => {
             />
           }
           title="Refer"
-          description="Invite friends on Groww"
+          description="Invite friends on StockSift"
         />
 
         <ProfileItem

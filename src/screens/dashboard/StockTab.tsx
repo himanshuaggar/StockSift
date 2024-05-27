@@ -10,6 +10,7 @@ import Explore from '../../components/stocks/Explore'
 import Holdings from '../../components/stockholdings/Holdings'
 import WatchList from '../../components/watchlist/WatchList'
 import AddWatchlist from '../../components/watchlist/AddWatchlist'
+import StockHeader from '../../components/stocks/StockHeader'
 
 const StockTab = () => {
     const MyTabs = [
@@ -22,7 +23,7 @@ const StockTab = () => {
           component: <Holdings />,
         },
         {
-          name: "Ritik's Watchlist",
+          name: "Himanshu's Watchlist",
           component: <WatchList />,
         },
         {
@@ -32,11 +33,9 @@ const StockTab = () => {
       ];
 
   return (
-    <CustomSafeAreaView style={{paddingHorizontal:5}}>
-        <TabHeader title='Stock' />
-        <FNOIndexes />
-        <CustomTab tabs={MyTabs} />
-    </CustomSafeAreaView>
+   
+        <CustomTab tabs={MyTabs} Header={StockHeader} />
+ 
   )
 }
 

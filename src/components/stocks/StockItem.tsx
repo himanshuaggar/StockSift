@@ -49,28 +49,28 @@ const StockItem: FC<StockItemProps> = React.memo(({ item }) => {
   const { colors } = useTheme();
   const [stockData, setStockData] = useState<any>(null);
 
-//   useEffect(() => {
-//     if (socketService && item?.symbol) {
-//       if (!subscribedSymbols.has(item.symbol)) {
-//         socketService.emit("subscribeToStocks", item.symbol);
-//         subscribedSymbols.add(item.symbol);
-//       }
+  // useEffect(() => {
+  //   if (socketService && item?.symbol) {
+  //     if (!subscribedSymbols.has(item.symbol)) {
+  //       socketService.emit("subscribeToStocks", item.symbol);
+  //       subscribedSymbols.add(item.symbol);
+  //     }
 
-//       socketService.on(item.symbol, (data) => {
-//         setStockData(data);
-//       });
+  //     socketService.on(item.symbol, (data) => {
+  //       setStockData(data);
+  //     });
 
-//       return () => {
-//         socketService.off(item.symbol);
-//         subscribedSymbols.delete(item.symbol);
-//       };
-//     }
-//   }, [item.symbol, socketService]);
-  const handlePress = () => {
-    const { tenMinTimeSeries, dayTimeSeries, ...stockWithoutTimeSeries } =
-      item as Stock;
-    navigate("StockDetail", { stock: stockWithoutTimeSeries });
-  };
+  //     return () => {
+  //       socketService.off(item.symbol);
+  //       subscribedSymbols.delete(item.symbol);
+  //     };
+  //   }
+  // }, [item.symbol, socketService]);
+  // const handlePress = () => {
+  //   const { tenMinTimeSeries, dayTimeSeries, ...stockWithoutTimeSeries } =
+  //     item as Stock;
+  //   navigate("StockDetail", { stock: stockWithoutTimeSeries });
+  // };
 
   const renderStockDetails = (stockData: any) => {
     const { companyName, currentPrice, lastDayTradedPrice, iconUrl } =
@@ -86,7 +86,7 @@ const StockItem: FC<StockItemProps> = React.memo(({ item }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
-        onPress={handlePress}
+        onPress={() => {}}
         style={[styles.itemContainer, { borderColor: colors.border }]}
       >
         <Image source={{ uri: iconUrl }} style={styles.img} />

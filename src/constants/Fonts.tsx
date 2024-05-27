@@ -8,4 +8,8 @@ export enum FONTS {
     Number = "Manrope-Regular",
     NumberSemiBold = "Manrope-SemiBold",
     Lato = "Lato-Regular",
+    PriceRegular = "Nunito-Regular",
+    PriceBold = "Nunito-Bold",
+    PriceSemiBold = "Nunito-SemiBold",
+    PriceMedium = "Nunito-Medium",
   }
