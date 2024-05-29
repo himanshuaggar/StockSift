@@ -8,6 +8,11 @@ import TimeFrame from '../../components/charts/TimeFrame';
 import DetailTab from '../../components/stockdetails/DetailsTab';
 import Overview from '../../components/stockdetails/Overview';
 import FutureAndOption from '../../components/stockdetails/FutureAndOptions';
+import MediumChart from '../../components/charts/linechart/MediumChart';
+import { candleChartData, ptData, ptData2 } from '../../utils/staticData';
+import { getSignPaisa } from '../../utils/NumberUtils';
+import TradeChart from '../../components/charts/candlechart/TradeChart';
+import { navigate } from '../../utils/NavigationUtil';
 
 
 interface StockDetail {
@@ -36,6 +41,11 @@ const StockDetail: FC<StockDetail> = ({ route }) => {
             setIsVisible(false);
         }
     };
+    const onPressExpandHandler = () => {
+        navigate("TradingView", {
+          stock: stockData,
+        });
+      };
 
     return (
         <CustomSafeAreaView style={styles.container}>
@@ -43,21 +53,23 @@ const StockDetail: FC<StockDetail> = ({ route }) => {
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
                 <View style={[styles.subContainer, { paddingTop: 0 }]}>
                     <Details data={stockData} />
-                    {/* {chartMode == "line" ? (
+                    {chartMode == "line" ? (
                         <MediumChart
                             data={ptData}
                             loading={chartDataLoading}
                             color={getSignPaisa(stockData?.price_change).color}
-                            onPressExpand={() => { }}
+                            onPressExpand={onPressExpandHandler}
                         />
                     ) : (
-                        <TradeChart
-                            data={candleChartData}
-                            onPressExpand={() => { }}
-                            loading={chartDataLoading}
-                            color={getSignPaisa(stockData?.price_change).color}
-                        />
-                    )} */}
+                        (
+                            <TradeChart
+                              data={candleChartData}
+                              onPressExpand={onPressExpandHandler}
+                              loading={chartDataLoading}
+                              color={getSignPaisa(stockData?.price_change).color}
+                            />
+                          )
+                    )}
                     <TimeFrame
                         chartMode={chartMode}
                         currentTimeFrame={currentTimeFrame}

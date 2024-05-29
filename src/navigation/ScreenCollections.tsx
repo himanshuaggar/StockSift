@@ -13,6 +13,7 @@ import AuthVerificationScreen from "../screens/auth/AuthVerificationSCreen";
 import SplashScreen from "../screens/deeplinks/SplashScreen";
 import BottomTab from "./BottomTab";
 import StockDetail from "../screens/stocks/StockDetail";
+import TradingView from "../screens/stocks/TradingView";
 
 export const authStack = [
     {
@@ -79,6 +80,10 @@ export const dashboardStack = [
       {
         name: "StockDetail",
         component: StockDetail,
+      },
+      {
+        name: "TradingView",
+        component: TradingView,
       },
 ]
 
