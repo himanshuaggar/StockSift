@@ -8,6 +8,7 @@ import { persistor, store } from './src/redux/store';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './ToastConfig';
 import { PersistGate } from 'redux-persist/integration/react';
+import "./src/sheets/sheet"
 
 GoogleSignin.configure({
   webClientId:

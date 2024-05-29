@@ -12,6 +12,7 @@ import AccountProtectedScreen from "../screens/auth/AccountProtectedScreen";
 import AuthVerificationScreen from "../screens/auth/AuthVerificationSCreen";
 import SplashScreen from "../screens/deeplinks/SplashScreen";
 import BottomTab from "./BottomTab";
+import StockDetail from "../screens/stocks/StockDetail";
 
 export const authStack = [
     {
@@ -74,6 +75,10 @@ export const dashboardStack = [
     {
         name: "BottomTab",
         component: BottomTab,
+      },
+      {
+        name: "StockDetail",
+        component: StockDetail,
       },
 ]
 

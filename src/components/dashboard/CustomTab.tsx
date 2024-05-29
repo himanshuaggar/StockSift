@@ -7,7 +7,7 @@ import TabBar from "./TabBar";
 import { SheetManager } from "react-native-actions-sheet";
 
 interface CustomTabProps {
-  Header?: React.FunctionComponent;
+  Header: React.FunctionComponent;
   tabs: { name: string; component: React.ReactNode }[];
 }
 
