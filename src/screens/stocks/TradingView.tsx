@@ -29,7 +29,7 @@ const TradingView: FC = () => {
         <CustomSafeAreaView style={styles.container}>
             <TradingViewHeader />
 
-            {/* <WebView
+            <WebView
                 style={{
                     flex: 1,
                     backgroundColor: colors.background,
@@ -39,8 +39,8 @@ const TradingView: FC = () => {
                 // source={{
                 //   uri:
                 //     Platform.OS == "ios"
-                //       ? `http://localhost:3001/?theme=${theme}&timeframe=1d`
-                //       : `http://10.0.2.2:3001/?theme=${theme}&timeframe=1d`,
+                //       ? `http://localhost:3000/?theme=${theme}&timeframe=1d`
+                //       : `http://10.0.2.2:3000/?theme=${theme}&timeframe=1d`,
                 // }}
                 allowFileAccessFromFileURLs={true}
                 domStorageEnabled={true}
@@ -54,7 +54,7 @@ const TradingView: FC = () => {
                 allowUniversalAccessFromFileURLs={true}
                 originWhitelist={["*"]}
                 onShouldStartLoadWithRequest={() => true}
-            /> */}
+            />
 
             <View style={styles.flexRow}>
                 <CustomButton

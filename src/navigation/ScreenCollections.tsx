@@ -14,6 +14,8 @@ import SplashScreen from "../screens/deeplinks/SplashScreen";
 import BottomTab from "./BottomTab";
 import StockDetail from "../screens/stocks/StockDetail";
 import TradingView from "../screens/stocks/TradingView";
+import Transaction from "../screens/stocks/Transaction";
+import TransactionSuccess from "../screens/stocks/TransactionSuccess";
 
 export const authStack = [
     {
@@ -84,6 +86,14 @@ export const dashboardStack = [
       {
         name: "TradingView",
         component: TradingView,
+      },
+      {
+        name: "Transaction",
+        component: Transaction,
+      },
+      {
+        name: "TransactionSuccess",
+        component: TransactionSuccess,
       },
 ]
 
