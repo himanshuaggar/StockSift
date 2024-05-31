@@ -16,6 +16,7 @@ import StockDetail from "../screens/stocks/StockDetail";
 import TradingView from "../screens/stocks/TradingView";
 import Transaction from "../screens/stocks/Transaction";
 import TransactionSuccess from "../screens/stocks/TransactionSuccess";
+import ProfileScreen from "../screens/auth/ProfileScreen";
 
 export const authStack = [
     {
@@ -66,6 +67,10 @@ export const authStack = [
     {
         name : "SplashScreen",
         component: SplashScreen,
+    },
+    {
+        name : "ProfileScreen",
+        component:ProfileScreen,
     },
 
 ];
