@@ -19,6 +19,19 @@ app.use(express.json());
 
 const holidays = ["2024-05-18", "2024-05-31"];
 
+const {
+    scheduleDayReset,
+    update10minCandle,
+    generateRandomDataEvery5Second,
+} = require("./src/services/cronJob");
+
+scheduleDayReset();
+generateRandomDataEvery5Second();
+update10minCandle();
+
+const authenticateSocketUser = require("./src/middleware/socketAuth");
+const socketHandshake = require("./src/middleware/socketHandshake");
+
 const isTradingHour = () => {
     const now = new Date();
     const dayOfWeek = now.getDay(); // 0 (Sunday) to 6 (Saturday)
@@ -38,7 +51,7 @@ const isTradingHour = () => {
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
     cors: {
-        origin: process.env.WEBSERVER_URI || "http://localhost:3001",
+        origin: process.env.WEBSERVER_URI || "http://localhost:3000",
         methods: ["GET", "POST"],
         allowedHeaders: ["access_token"],
         credentials: true,
@@ -101,6 +114,12 @@ io.on("connection", (socket) => {
     });
 });
 
+httpServer.listen(process.env.SOCKET_PORT || 3001, () => {
+    console.log(
+        "WebSocket server is running and listening on port",
+        httpServer.address().port
+    );
+});
 
 const start = async () => {
     try {
@@ -119,7 +138,7 @@ app.get("/", (req, res) => {
 })
 
 app.use("/auth", authRouter);
-app.use("/stocks", authenticateUser, stockRouter);
+app.use("/stocks",authenticateSocketUser, stockRouter);
 
 //Middleware
 app.use(notFound)

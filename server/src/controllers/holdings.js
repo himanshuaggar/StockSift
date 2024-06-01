@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError } = require("../errors");
-const Holding = require("../models/Holding");
+const Holding = require("../models/Holdings");
 const User = require("../models/User");
 const Order = require("../models/Order");
 const jwt = require("jsonwebtoken");
