@@ -15,7 +15,6 @@ export const socketAxios = axios.create({
 appAxios.interceptors.request.use(async (config) => {
   const app_access_token = token_storage.getString("app_access_token");
   if (app_access_token) {
-    console.log("ACESS TOKEN -->", app_access_token);
     config.headers.Authorization = `Bearer ${app_access_token}`;
   }
   return config;

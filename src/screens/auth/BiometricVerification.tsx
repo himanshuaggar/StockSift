@@ -13,7 +13,7 @@ import { loginWithBiometrics } from "../../utils/BiometricsUtils";
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHook";
 import { Logout, VerifyPin } from "../../redux/actions/userAction";
 import { selectUser } from "../../redux/reducers/userSlice";
-import User from "../../../server/src/models/User";
+import { useWS } from "../../utils/WSProvider";
 
 const initialState = ["", "", "", ""];
 
@@ -23,11 +23,12 @@ interface BiometricProp {
 
 const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
   const [otpValues, setOtpValues] = useState(["", "", "", ""]);
+  const user = useAppSelector(selectUser);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUser);
+  const { updateAccessToken } = useWS();
 
   const handlePressNumber = (number: number | string) => {
     if (focusedIndex < otpValues.length) {
@@ -58,6 +59,7 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
 
     if (result) {
       setOtpValues(["B", "I", "O", "P"]);
+      resetAndNavigate("BottomTab");
     }
   };
 
@@ -77,7 +79,7 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
     if (!valid) {
       setLoading(true);
       const { result, msg } = await dispatch(
-        VerifyPin({ login_pin: otpValues.join("") })
+        VerifyPin({ login_pin: otpValues.join("") }, updateAccessToken)
       );
       if (!result) {
         setOtpError(msg);
@@ -97,20 +99,22 @@ const BiometricVerification: FC<BiometricProp> = ({ onForgotPin }) => {
     }
   }, [otpValues]);
 
-
+  useEffect(() => {
+    handleBiometricVerification();
+  }, []);
   return (
     <CustomSafeAreaView>
       <View style={styles.container}>
         <Image source={Logo} style={styles.logo} />
         <CustomText variant="h6" fontFamily={FONTS.Bold}>
-          Enter StockSift PIN
+          Enter PIN
         </CustomText>
         <View style={styles.emailContainer}>
           <CustomText style={styles.subText}>{user?.email}</CustomText>
           <TouchableText
             firstText="Logout"
             style={styles.logoutText}
-            onPress={() => {dispatch(Logout())}}
+            onPress={() => dispatch(Logout())}
           />
         </View>
       </View>

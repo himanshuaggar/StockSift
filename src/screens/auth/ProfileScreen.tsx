@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  useColorScheme,
-} from "react-native";
+import { View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import React, { FC, useEffect } from "react";
 import CustomSafeAreaView from "../../components/global/CustomSafeAreaView";
 import ProfileHeader from "../../components/headers/ProfileHeader";
@@ -18,7 +11,7 @@ import { selectUser } from "../../redux/reducers/userSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHook";
 import { useTheme } from "@react-navigation/native";
 import { RFValue } from "react-native-responsive-fontsize";
-import { Logout, refetchUser } from "../../redux/actions/userAction"
+import { Logout, refetchUser } from "../../redux/actions/userAction";
 import { toggleColorScheme } from "../../redux/reducers/themeSlice";
 import { useCustomColorScheme } from "../../navigation/Theme";
 
@@ -40,7 +33,6 @@ const ProfileItem: FC<ProfileItemProps> = ({
   useEffect(() => {
     dispatch(refetchUser());
   }, []);
-
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -70,7 +62,7 @@ const ProfileScreen = () => {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const theme = useColorScheme();
+  const theme = useCustomColorScheme();
   return (
     <CustomSafeAreaView style={{ paddingHorizontal: 0 }}>
       <ProfileHeader />
@@ -106,7 +98,7 @@ const ProfileScreen = () => {
             />
           }
           title="Refer"
-          description="Invite friends on StockSift"
+          description="Invite friends on Groww"
         />
 
         <ProfileItem
@@ -118,7 +110,7 @@ const ProfileScreen = () => {
               color={colors.text}
             />
           }
-          title="₹24000.00"
+          title={`₹${user?.balance}`}
           description="Stocks, F&O Balance"
         />
 

@@ -16,7 +16,6 @@ import CustomButton from "../../components/global/CustomButton";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Colors as colorw } from "../../constants/Colors";
 import OtpTimer from "../../components/auth/OtpTimer";
-import { navigate } from "../../utils/NavigationUtil";
 import { useAppDispatch, useAppSelector } from "../../redux/reduxHook";
 import { SendOTP, VerifyOTP } from "../../redux/actions/userAction";
 import { selectUser } from "../../redux/reducers/userSlice";
@@ -32,12 +31,11 @@ const PhoneScreen = () => {
     const [otp, setOtp] = useState("");
     const [otpError, setOtpError] = useState("");
     const dispatch = useAppDispatch();
-
     const handleSendOTP = async () => {
         setLoading(true);
-    await dispatch(SendOTP({ email: user.email || "", otp_type: "phone" }));
-    setOtpSent(true);
-    setLoading(false);
+        await dispatch(SendOTP({ email: user.email || "", otp_type: "phone" }));
+        setOtpSent(true);
+        setLoading(false);
     };
 
     const handleVerifyOTP = async () => {
@@ -48,13 +46,12 @@ const PhoneScreen = () => {
         setLoading(true);
         await dispatch(
             VerifyOTP({
-              email: user.email || "",
-              otp_type: "phone",
-              data: phoneNumber,
-              otp: otp,
+                email: user.email || "",
+                otp_type: "phone",
+                data: phoneNumber,
+                otp: otp,
             })
-          );
-        
+        );
         setLoading(false);
     };
 

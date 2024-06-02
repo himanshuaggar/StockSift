@@ -7,17 +7,18 @@ import { RFValue } from "react-native-responsive-fontsize";
 import CustomNumberPad from "../../components/inputs/CustomNumberPad";
 import OTPInput from "../../components/inputs/OTPInput";
 import BackButton from "../../components/global/BackButton";
-import { resetAndNavigate } from "../../utils/NavigationUtil";
 import { useAppDispatch } from "../../redux/reduxHook";
 import { SetLoginPin } from "../../redux/actions/userAction";
+import { useWS } from "../../utils/WSProvider";
 
 const ConfirmPinScreen = ({ route }: any) => {
 
   const dispatch = useAppDispatch();
+  const { updateAccessToken } = useWS();
   const [otpValues, setOtpValues] = useState(["", "", "", ""]);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [otpError, setOtpError] = useState<string | null>(null);
-  
+
   const handlePressNumber = (number: number | string) => {
     if (focusedIndex < otpValues.length) {
       const newOtpValues = [...otpValues];
@@ -55,8 +56,9 @@ const ConfirmPinScreen = ({ route }: any) => {
 
     if (!valid) {
       await dispatch(
-        SetLoginPin({ login_pin: otpValues.join("") })
-      );    }
+        SetLoginPin({ login_pin: otpValues.join("") }, updateAccessToken)
+      );
+    }
   };
 
   return (
@@ -67,10 +69,10 @@ const ConfirmPinScreen = ({ route }: any) => {
         fontFamily={FONTS.Medium}
         style={styles.mainContainer}
       >
-        Confirm your StockSift PIN
+        Confirm your PIN
       </CustomText>
       <CustomText style={styles.subText}>
-        Re-enter your StockSift PIN for confimation.
+        Re-enter your PIN for confimation.
       </CustomText>
       <OTPInput
         otpValues={otpValues}

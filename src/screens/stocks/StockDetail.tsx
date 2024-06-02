@@ -1,27 +1,70 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
-import React, { FC, useState } from 'react'
-import CustomSafeAreaView from '../../components/global/CustomSafeAreaView';
-import StockDetailHeader from '../../components/global/StockDetailHeader';
-import { screenHeight } from '../../utils/Scaling';
-import Details from './Details';
-import TimeFrame from '../../components/charts/TimeFrame';
-import DetailTab from '../../components/stockdetails/DetailsTab';
-import Overview from '../../components/stockdetails/Overview';
-import FutureAndOption from '../../components/stockdetails/FutureAndOptions';
-import MediumChart from '../../components/charts/linechart/MediumChart';
-import { candleChartData, ptData, ptData2 } from '../../utils/staticData';
-import { getSignPaisa } from '../../utils/NumberUtils';
-import TradeChart from '../../components/charts/candlechart/TradeChart';
-import { navigate } from '../../utils/NavigationUtil';
-
-
-interface StockDetail {
-    route: Record<string, any>;
+import { StyleSheet, ScrollView, View } from "react-native";
+import React, { FC, useEffect, useState } from "react";
+import CustomSafeAreaView from "../../components/global/CustomSafeAreaView";
+import StockDetailHeader from "../../components/headers/StockDetailHeader";
+import Details from "./Details";
+import TimeFrame from "../../components/charts/TimeFrame";
+import MediumChart from "../../components/charts/linechart/MediumChart";
+import DetailTab from "../../components/stockdetails/DetailsTab";
+import Overview from "../../components/stockdetails/Overview";
+import { screenHeight } from "../../utils/Scaling";
+import FutureAndOption from "../../components/stockdetails/FutureAndOptions";
+import { getSignPaisa } from "../../utils/NumberUtils";
+import TradeChart from "../../components/charts/candlechart/TradeChart";
+import { ParamListBase, RouteProp, useRoute } from "@react-navigation/native";
+import { navigate } from "../../utils/NavigationUtil";
+import { useWS } from "../../utils/WSProvider";
+interface ParamsType {
+    stock?: any;
 }
-
 const tabs = ["Overview", "F&O"];
 
-const StockDetail: FC<StockDetail> = ({ route }) => {
+type Stock = {
+    __v: number;
+    _id: string;
+    companyName: string;
+    currentPrice: number;
+    iconUrl: string;
+    lastDayTradedPrice: number;
+    symbol: string;
+    dayTimeSeries: Array<TimeSeries>;
+    tenMinTimeSeries: Array<TimeSeries>;
+};
+
+type TimeSeries = {
+    _internal_originalTime: number;
+    close: number;
+    high: number;
+    low: number;
+    open: number;
+    time: number;
+    timestamp: string;
+};
+
+const StockDetail: FC = () => {
+    const route = useRoute<RouteProp<ParamListBase>>();
+    const socketService = useWS();
+    const stockData = (route.params as ParamsType)?.stock || null;
+
+    const [stockSocketData, setSocketStockData] = useState<Stock | any>(null);
+    useEffect(() => {
+        if (socketService && stockData.symbol) {
+            socketService.emit("subscribeToStocks", stockData.symbol);
+
+            socketService.on(stockData.symbol, (data) => {
+                setSocketStockData(data);
+            });
+
+            return () => { };
+        }
+    }, [socketService]);
+
+    const priceChange =
+        stockSocketData?.currentPrice - stockSocketData?.lastDayTradedPrice;
+    const percentageChange = Math.abs(
+        (priceChange / stockSocketData?.lastDayTradedPrice) * 100
+    ).toFixed(2);
+
     const [isVisible, setIsVisible] = useState(false);
     const [chartDataLoading, setChartDataLoading] = useState(false);
 
@@ -29,7 +72,6 @@ const StockDetail: FC<StockDetail> = ({ route }) => {
     const [currentTab, setCurrentTab] = useState(0);
     const [chartMode, setChartMode] = useState("line");
 
-    const stockData = route.params.stock;
     const handleScroll = (event: any) => {
         const scrollPosition = event.nativeEvent.contentOffset.y;
 
@@ -41,34 +83,58 @@ const StockDetail: FC<StockDetail> = ({ route }) => {
             setIsVisible(false);
         }
     };
+
     const onPressExpandHandler = () => {
-        navigate("TradingView", {
-          stock: stockData,
-        });
-      };
+        const { tenMinTimeSeries, dayTimeSeries, ...stockWithoutTimeSeries } =
+            stockData as Stock;
+        navigate("TradingView", { stock: stockWithoutTimeSeries });
+    };
 
     return (
         <CustomSafeAreaView style={styles.container}>
-            <StockDetailHeader stock={stockData} isVisible={isVisible} />
-            <ScrollView onScroll={handleScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
+            <StockDetailHeader
+                stock={{
+                    companyName: stockData?.companyName,
+                    priceChange: priceChange,
+                    currentPrice: stockSocketData?.currentPrice,
+                    percentageChange: percentageChange,
+                }}
+                isVisible={isVisible}
+            />
+            <ScrollView
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={[styles.subContainer, { paddingTop: 0 }]}>
-                    <Details data={stockData} />
+                    <Details
+                        data={{
+                            companyName: stockData?.companyName,
+                            priceChange: priceChange,
+                            currentPrice: stockSocketData?.currentPrice,
+                            percentageChange: percentageChange,
+                            iconUrl: stockData?.iconUrl,
+                        }}
+                    />
                     {chartMode == "line" ? (
                         <MediumChart
-                            data={ptData}
+                            data={stockSocketData?.tenMinTimeSeries.map(
+                                ({ close, time }: any) => ({
+                                    value: close,
+                                    time: time,
+                                })
+                            )}
                             loading={chartDataLoading}
-                            color={getSignPaisa(stockData?.price_change).color}
+                            color={getSignPaisa(priceChange).color}
                             onPressExpand={onPressExpandHandler}
                         />
                     ) : (
-                        (
-                            <TradeChart
-                              data={candleChartData}
-                              onPressExpand={onPressExpandHandler}
-                              loading={chartDataLoading}
-                              color={getSignPaisa(stockData?.price_change).color}
-                            />
-                          )
+                        <TradeChart
+                            data={stockSocketData?.dayTimeSeries || []}
+                            onPressExpand={onPressExpandHandler}
+                            loading={chartDataLoading}
+                            color={getSignPaisa(priceChange).color}
+                        />
                     )}
                     <TimeFrame
                         chartMode={chartMode}
@@ -85,7 +151,7 @@ const StockDetail: FC<StockDetail> = ({ route }) => {
                         }
                     />
                 </View>
-                <ScrollView horizontal contentContainerStyle={{ width: "100%", }} >
+                <ScrollView horizontal contentContainerStyle={{ width: "100%" }}>
                     {tabs.map((item, index) => {
                         const tabWidth = (1 / tabs?.length) * 100;
                         return (
@@ -98,16 +164,15 @@ const StockDetail: FC<StockDetail> = ({ route }) => {
                             />
                         );
                     })}
-                    
                 </ScrollView>
                 <View style={styles.subContainer}>
-                        {currentTab == 0 && <Overview />}
-                        {currentTab == 1 && <FutureAndOption />}
-                    </View>
+                    {currentTab == 0 && <Overview />}
+                    {currentTab == 1 && <FutureAndOption />}
+                </View>
             </ScrollView>
         </CustomSafeAreaView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -119,5 +184,4 @@ const styles = StyleSheet.create({
     },
 });
 
-
-export default StockDetail
+export default StockDetail;

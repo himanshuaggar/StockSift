@@ -7,6 +7,7 @@ import { screenWidth } from "react-native-gifted-charts/src/utils";
 import { formatPaisaWithCommas, hexToRGBA } from "../../../utils/NumberUtils";
 import { ptData2 } from "../../../utils/staticData";
 import { Colors } from "../../../constants/Colors";
+import { convertUnixTimestamp } from "../../../utils/ValidationUtils";
 
 interface Chart {
     height: number;
@@ -35,15 +36,6 @@ const PointerChart: FC<Chart> = ({ height, data, color }) => {
                 strokeDashArray: [5, 5],
                 thickness: 1,
                 color: Colors.unactive_tab,
-            }}
-            onScroll={() => {
-                console.log("Hey");
-            }}
-            onEndReached={() => {
-                console.log("Hey");
-            }}
-            onMomentumScrollEnd={() => {
-                console.log("Hey");
             }}
             getPointerProps={(props: any) => {
                 setMeasure(props.pointerX);
@@ -120,7 +112,8 @@ const PointerChart: FC<Chart> = ({ height, data, color }) => {
                                 style={{ textAlign: "center" }}
                                 variant="h9"
                             >
-                                {formatPaisaWithCommas(items[0]?.value)} | {items[0].date}
+                                {formatPaisaWithCommas(items[0]?.value)} |{" "}
+                                {convertUnixTimestamp(items[0].time)}
                             </CustomText>
                         </View>
                     );

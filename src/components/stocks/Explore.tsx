@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   Image,
   RefreshControl,
@@ -18,6 +18,9 @@ import { mostBoughtData } from "../../utils/staticData";
 import ProductAndTools from "./ProductAndTools";
 import GainerAndLoser from "./GainerAndLoser";
 import InfoText from "../global/InfoText";
+import { useAppDispatch, useAppSelector } from "../../redux/reduxHook";
+import { selectStocks } from "../../redux/reducers/stockSlice";
+import { getAllStocks } from "../../redux/actions/stockAction";
 
 interface SepratorProps {
   label: string;
@@ -51,10 +54,21 @@ const Seprator: FC<SepratorProps> = ({ label, seeMore }) => {
 };
 
 const Explore = () => {
+  const dispatch = useAppDispatch();
+  const stockData = useAppSelector(selectStocks);
   const [refereshing, setRefreshing] = useState(false);
+  
   const refreshHandler = async () => {
     setRefreshing(false);
   };
+  const fetchStocks = async () => {
+    await dispatch(getAllStocks());
+  };
+
+  useEffect(() => {
+    fetchStocks();
+  }, []);
+
   console.log(mostBoughtData);
   return (
     <Tabs.ScrollView
@@ -70,15 +84,15 @@ const Explore = () => {
       }
     >
       <Seprator label="Most bought on StockSift" />
-      <StockCard data={mostBoughtData} />
+      <StockCard data={stockData} />
       <Seprator label="Product & Tools" />
       <ProductAndTools />
       <GainerAndLoser />
       <Seprator label="Top Intraday" seeMore />
-      <StockCard data={mostBoughtData} />
+      <StockCard data={stockData} />
 
       <Seprator label="Stock in news" seeMore />
-      <StockCard data={mostBoughtData} />
+      <StockCard data={stockData} />
       <InfoText
         data={[
           "This app is made for demo purpose only!",

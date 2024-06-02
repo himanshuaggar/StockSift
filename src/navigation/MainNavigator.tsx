@@ -1,13 +1,14 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import { SheetProvider } from "react-native-actions-sheet";
 import { mergedStacks } from "./ScreenCollections";
+import { WSProvider } from "../utils/WSProvider";
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
   return (
+    <WSProvider>
     <SheetProvider>
       <Stack.Navigator
         screenOptions={() => ({
@@ -26,6 +27,7 @@ const MainNavigator = () => {
         })}
       </Stack.Navigator>
     </SheetProvider>
+    </WSProvider>
   );
 };
 
