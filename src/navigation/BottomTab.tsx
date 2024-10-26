@@ -8,7 +8,8 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { Platform } from "react-native";
 import { Colors } from "../constants/Colors";
 import { FONTS } from "../constants/Fonts";
-import { MutualTabIcon, PayTabIcon, StockTabIcon } from "./TabIcon";
+import { MutualTabIcon, NewsTabIcon, PayTabIcon, StockTabIcon } from "./TabIcon";
+import NewsTab from "../screens/dashboard/NewsTab";
 
 const Tab = createBottomTabNavigator();
 
@@ -42,6 +43,8 @@ const BottomTab: FC = () => {
           }
           if (route.name === "Pay") {
             return <PayTabIcon focused={focused} />;
+          }if (route.name === "News") {
+            return <NewsTabIcon focused={focused} />;
           }
         },
       })}
@@ -49,6 +52,8 @@ const BottomTab: FC = () => {
       <Tab.Screen name="Stocks" component={StockTab} />
       <Tab.Screen name="Mutual Funds" component={MutualTab} />
       <Tab.Screen name="Pay" component={PayTab} />
+      <Tab.Screen name="News" component={NewsTab} />
+
     </Tab.Navigator>
   );
 };

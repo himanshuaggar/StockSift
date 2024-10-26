@@ -51,7 +51,7 @@ const isTradingHour = () => {
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
     cors: {
-        origin: process.env.WEBSERVER_URI || "http://localhost:3000",
+        origin: process.env.WEBSERVER_URI || "http://localhost:3001",
         methods: ["GET", "POST"],
         allowedHeaders: ["access_token"],
         credentials: true,

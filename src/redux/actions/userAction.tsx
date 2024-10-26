@@ -160,11 +160,14 @@ export const SendOTP = (data: SendOTP) => async (dispatch: any) => {
 };
 
 export const Register = (data: Register) => async (dispatch: any) => {
+  console.log(data);
   try {
     const res = await axios.post(REGISTER, data);
+    console.log(res);
     token_storage.set("app_access_token", res.data.tokens.access_token);
     token_storage.set("app_refresh_token", res.data.tokens.refresh_token);
     const user = await dispatch(setUser(res.data.user));
+    console.log(user);
     resetAndNavigate("PhoneScreen");
     console.log("REGISTER ->", res.data);
   } catch (error: any) {

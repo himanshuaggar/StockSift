@@ -2,7 +2,7 @@ import EmailScreen from "../screens/auth/EmailScreen";
 import HomeScreen from "../screens/dashboard/HomeScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import EmailOtpScreen from "../screens/auth/EmailOtpScreen";
-import SetPasswordScreen from "../screens/auth/SetPasswordScreen";
+import RegisterScreen from "../screens/auth/RegisterScreen";
 import EmailPasswordScreen from "../screens/auth/EmailPasswordScreen";
 import PersonalDetailScreen from "../screens/auth/PersonalDetailScreen";
 import PhoneScreen from "../screens/auth/PhoneScreen";
@@ -33,8 +33,8 @@ export const authStack = [
         component: EmailOtpScreen,
     },
     {
-        name : "SetPasswordScreen",
-        component: SetPasswordScreen,
+        name : "RegisterScreen",
+        component: RegisterScreen,
     },
     {
         name : "EmailPasswordScreen",

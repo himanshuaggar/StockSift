@@ -56,12 +56,16 @@ const verifyOtp = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (otp_type == 'email' && !user) {
-        const pass_token = jwt.sign({ email: email }, process.env.PASSWORD_SET_SECRET, {
-            expiresIn: process.env.PASSWORD_SET_SECRET_EXPIRY
-        });
+        const pass_token = jwt.sign(
+            { email: email },
+            process.env.PASSWORD_SET_SECRET,
+            {
+                expiresIn: process.env.PASSWORD_SET_SECRET_EXPIRY
+            }
+        );
         res.status(StatusCodes.OK).json({
             msg: "OTP Verified",
-            pass_token: pass_token,
+            register_token: pass_token,
         })
         return
     }

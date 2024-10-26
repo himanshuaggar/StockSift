@@ -4,6 +4,8 @@ import Stock from "../assets/tabicons/stock.png";
 import StockFocused from "../assets/tabicons/stock.png";
 import Pay from "../assets/tabicons/pay.png";
 import PayFocused from "../assets/tabicons/pay.png";
+import News from "../assets/tabicons/newspaper.png";
+import NewsFocused from "../assets/tabicons/newspaper.png"
 import { FC } from "react";
 import { Image } from "react-native";
 import { GlobalStyles } from "../styles/GlobalStyles";
@@ -19,7 +21,7 @@ interface IconProp {
 const TabIcon: FC<TabProps> = ({ name }) => {
   return (
     <Image
-      source={name === "Stock" ? Stock : name === "Mutual" ? Mutual : Pay}
+      source={name === "Stock" ? Stock : name === "Mutual" ? Mutual : name === "Pay" ? Pay : News}
       style={[GlobalStyles.tabIcon]}
     />
   );
@@ -32,8 +34,10 @@ const TabIconFocused: FC<TabProps> = ({ name }) => {
         name === "Stock"
           ? StockFocused
           : name === "Mutual"
-          ? MutualFocused
-          : PayFocused
+            ? MutualFocused
+            : name === "Pay"
+              ? PayFocused :
+              NewsFocused
       }
       style={[GlobalStyles.tabIcon]}
     />
@@ -50,4 +54,8 @@ export const MutualTabIcon: FC<IconProp> = ({ focused }) => {
 
 export const PayTabIcon: FC<IconProp> = ({ focused }) => {
   return focused ? <TabIconFocused name="Pay" /> : <TabIcon name="Pay" />;
+};
+
+export const NewsTabIcon: FC<IconProp> = ({ focused }) => {
+  return focused ? <TabIconFocused name="News" /> : <TabIcon name="News" />;
 };

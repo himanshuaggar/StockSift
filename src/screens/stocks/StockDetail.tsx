@@ -58,9 +58,10 @@ const StockDetail: FC = () => {
             return () => { };
         }
     }, [socketService]);
+    console.log(stockSocketData)
 
-    const priceChange =
-        stockSocketData?.currentPrice - stockSocketData?.lastDayTradedPrice;
+
+    const priceChange = stockSocketData?.current_price - stockSocketData?.lastDayTradedPrice;
     const percentageChange = Math.abs(
         (priceChange / stockSocketData?.lastDayTradedPrice) * 100
     ).toFixed(2);
@@ -93,12 +94,12 @@ const StockDetail: FC = () => {
     return (
         <CustomSafeAreaView style={styles.container}>
             <StockDetailHeader
-                stock={{
-                    companyName: stockData?.companyName,
-                    priceChange: priceChange,
-                    currentPrice: stockSocketData?.currentPrice,
-                    percentageChange: percentageChange,
-                }}
+               stock={{
+                companyName: stockData?.name,
+                priceChange: stockData?.price_change,
+                currentPrice: stockSocketData?.current_price,
+                percentageChange: stockData?.percentage_change,
+            }}
                 isVisible={isVisible}
             />
             <ScrollView
@@ -108,25 +109,23 @@ const StockDetail: FC = () => {
             >
                 <View style={[styles.subContainer, { paddingTop: 0 }]}>
                     <Details
-                        data={{
-                            companyName: stockData?.companyName,
-                            priceChange: priceChange,
-                            currentPrice: stockSocketData?.currentPrice,
-                            percentageChange: percentageChange,
-                            iconUrl: stockData?.iconUrl,
+                         data={{
+                            companyName: stockData?.name,
+                            priceChange: stockData?.price_change,
+                            currentPrice: stockSocketData?.current_price,
+                            percentageChange: stockData?.percentage_change,
+                            iconUrl: stockData?.icon_url,
                         }}
                     />
                     {chartMode == "line" ? (
                         <MediumChart
-                            data={stockSocketData?.tenMinTimeSeries.map(
-                                ({ close, time }: any) => ({
-                                    value: close,
-                                    time: time,
-                                })
-                            )}
-                            loading={chartDataLoading}
-                            color={getSignPaisa(priceChange).color}
-                            onPressExpand={onPressExpandHandler}
+                        data={stockSocketData?.tenMinTimeSeries.map(({ close, time }: any) => ({
+                            value: close,
+                            time: time,
+                        }))}
+                        loading={chartDataLoading}
+                        color={getSignPaisa(priceChange).color}
+                        onPressExpand={onPressExpandHandler}
                         />
                     ) : (
                         <TradeChart

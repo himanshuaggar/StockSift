@@ -17,6 +17,7 @@ interface DetailsProps {
 
 const Details: FC<DetailsProps> = ({ data }) => {
     const { colors } = useTheme();
+    console.log("Stock details from Details.tsx",data)
     return (
         <View>
             <View style={styles.flexRowBetween}>
